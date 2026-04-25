@@ -602,6 +602,8 @@ footer { background:var(--surface); border-top:1px solid var(--border); padding:
         </div>
         <p style="font-size:0.77rem;max-width:100%;margin-bottom:18px;">Platform cut covers servers, staff, ad network fees, withdrawal costs, and fraud prevention. Full monthly breakdown published publicly.</p>
         <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:14px 16px;">
+          <p style="font-size:0.75rem;color:var(--sub);margin-bottom:6px;font-weight:700;max-width:100%">EXAMPLE</p>
+          <p style="font-size:0.8rem;max-width:100%">5,000 monthly views on your content at $0.45 CPM = <strong style="color:var(--green)">~$0.75/month</strong> passively. Scale posts to multiply.</p>
         </div>
       </div>
     </div>
@@ -793,12 +795,12 @@ footer { background:var(--surface); border-top:1px solid var(--border); padding:
         </select>
       </div>
       <p class="fine-print">By signing up you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. Missing a streak day resets your balance to $0. You can delete your account at any time.</p>
-      <button class="btn btn-fill" style="width:100%;font-size:0.9rem;padding:12px;border:none;">Create Free Account →</button>
+      <button onclick="handleSignUp()" class="btn btn-fill" style="width:100%;font-size:0.9rem;padding:12px;border:none;">Create Free Account →</button>
     </div>
     <div id="form-login" style="display:none">
       <div class="fg"><label>Email Address</label><input type="email" placeholder="you@email.com"/></div>
       <div class="fg"><label>Password</label><input type="password" placeholder="Your password"/></div>
-      <button class="btn btn-fill" style="width:100%;font-size:0.9rem;padding:12px;border:none;margin-top:8px;">Log In →</button>
+      <button onclick="handleLogIn()" class="btn btn-fill" style="width:100%;font-size:0.9rem;padding:12px;border:none;margin-top:8px;">Log In →</button>
     </div>
   </div>
 </div>
@@ -823,6 +825,89 @@ const io = new IntersectionObserver(entries=>{
   entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
 },{threshold:0.08});
 document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
+</script>
+
+<script type="module">
+  // Import the functions you need from the SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",
+    authDomain: "createandearn-b7502.firebaseapp.com",
+    projectId: "createandearn-b7502",
+    storageBucket: "createandearn-b7502.firebasestorage.app",
+    messagingSenderId: "311184359792",
+    appId: "1:311184359792:web:3b15ad30849e5645390fb5",
+    measurementId: "G-DDE317TJ2R"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // --- SIGN UP FUNCTION ---
+  window.handleSignUp = async () => {
+    const nameInput = document.querySelector('#form-signup input[placeholder="Your full name"]');
+    const emailInput = document.querySelector('#form-signup input[placeholder="you@email.com"]');
+    const passwordInput = document.querySelector('#form-signup input[placeholder="Create a strong password"]');
+    const roleSelect = document.querySelector('#form-signup select');
+
+    const name = nameInput.value;
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    const role = roleSelect.value;
+
+    if(!email || !password) {
+        alert("Please enter email and password.");
+        return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Save additional user info to the Database
+      await setDoc(doc(db, "users", user.uid), {
+        fullName: name,
+        email: email,
+        role: role,
+        balance: 0,
+        streak: 0,
+        createdAt: new Date()
+      });
+
+      alert("Account created successfully!");
+      closeModal();
+    } catch (error) {
+      alert("Error: " + error.message);
+    }
+  };
+
+  // --- LOG IN FUNCTION ---
+  window.handleLogIn = async () => {
+    const emailInput = document.querySelector('#form-login input[placeholder="you@email.com"]');
+    const passwordInput = document.querySelector('#form-login input[placeholder="Your password"]');
+
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    if(!email || !password) {
+        alert("Please enter email and password.");
+        return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Logged in successfully!");
+      closeModal();
+      // You can redirect to a dashboard here
+    } catch (error) {
+      alert("Error: " + error.message);
+    }
+  };
 </script>
 </body>
 </html>
