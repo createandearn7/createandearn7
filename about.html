@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>About Us — CreateAndEarn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090e;--surface:#111118;--card:#17171f;--border:#252532;--accent:#6c63ff;--green:#00c896;--rose:#f05d7a;--gold:#e8b84b;--text:#ededf5;--sub:#9090a8;--faint:#3a3a50;--radius:14px}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;line-height:1.2;letter-spacing:-0.3px}
+p{max-width:60ch;color:var(--sub)}
+strong{color:var(--text);font-weight:600}
+a{color:var(--accent);text-decoration:none}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--text)}.logo em{font-style:italic;color:var(--accent)}
+nav ul{display:flex;gap:32px;list-style:none;align-items:center}
+nav ul a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s}nav ul a:hover{color:var(--text)}
+.nav-btn{background:var(--accent);color:#fff!important;padding:8px 20px;border-radius:8px;font-weight:600!important;font-size:0.85rem!important;transition:opacity .2s}.nav-btn:hover{opacity:0.85}
+.page-wrap{max-width:860px;margin:0 auto;padding:120px 48px 88px}
+.hero-section{margin-bottom:72px;position:relative}
+.hero-blob{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px)}
+.blob1{width:400px;height:400px;background:rgba(108,99,255,0.1);top:-60px;right:-60px}
+.sec-label{font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.page-title{font-size:clamp(2rem,4vw,3rem);margin-bottom:16px;color:var(--text)}
+.page-title em{font-style:italic;color:var(--accent)}
+.lead{font-size:1.05rem;line-height:1.8;max-width:580px;margin-bottom:32px}
+.pill{display:inline-flex;align-items:center;gap:8px;background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.25);border-radius:100px;padding:5px 14px;font-size:0.78rem;font-weight:600;color:var(--accent);margin-bottom:24px}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.values-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:56px}
+.value-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:border-color .2s,transform .2s}
+.value-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.value-ico{font-size:1.5rem;margin-bottom:12px;display:block}
+.value-card h3{font-family:'Instrument Sans',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.value-card p{font-size:0.83rem;max-width:100%;line-height:1.7}
+.story-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px;margin-bottom:48px}
+.story-block h2{font-size:1.3rem;color:var(--text);margin-bottom:16px}
+.story-block p{font-size:0.88rem;max-width:100%;line-height:1.85;margin-bottom:12px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:56px}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;text-align:center}
+.stat-box .n{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px}
+.stat-box .l{font-size:0.78rem;color:var(--sub)}
+.cta-wrap{background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,200,150,0.05));border:1px solid rgba(108,99,255,0.2);border-radius:var(--radius);padding:36px;text-align:center;margin-bottom:16px}
+.cta-wrap h2{font-size:1.4rem;color:var(--text);margin-bottom:8px}
+.cta-wrap p{margin:0 auto 24px;font-size:0.9rem;max-width:420px}
+.btn{display:inline-block;padding:11px 26px;border-radius:10px;font-weight:600;font-size:0.88rem;cursor:pointer;border:none;transition:all .2s;font-family:'Instrument Sans',sans-serif}
+.btn-fill{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(108,99,255,0.28)}.btn-fill:hover{transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--accent);background:rgba(108,99,255,0.05)}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:56px 48px 32px}
+.ft-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.ft-brand p{font-size:0.83rem;margin-top:10px;max-width:240px;color:var(--sub)}
+.ft-col h5{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:14px;font-family:'Instrument Sans',sans-serif}
+.ft-col ul{list-style:none}.ft-col ul li{margin-bottom:9px}.ft-col ul li a{color:var(--sub);font-size:0.83rem;transition:color .2s}.ft-col ul li a:hover{color:var(--text)}
+.ft-bottom{border-top:1px solid var(--border);padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.ft-bottom p{font-size:0.78rem;color:var(--sub);max-width:100%}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}.fade-in.visible{opacity:1;transform:none}
+@media(max-width:960px){nav{padding:14px 24px}nav ul{gap:18px}.page-wrap{padding:100px 24px 72px}.ft-grid{grid-template-columns:1fr 1fr}footer{padding:40px 24px 24px}}
+@media(max-width:600px){nav ul{display:none}.ft-grid{grid-template-columns:1fr}.page-wrap{padding:88px 18px 60px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Create<em>&</em>Earn</a>
+  <ul>
+    <li><a href="/#how">How It Works</a></li>
+    <li><a href="/#tasks">Tasks</a></li>
+    <li><a href="/#creators">Creators</a></li>
+    <li><a href="/#withdraw">Withdraw</a></li>
+    <li><a href="/#faq">FAQ</a></li>
+    <li><a href="/" class="nav-btn">Join Free</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="hero-section fade-in">
+    <div class="hero-blob blob1"></div>
+    <div class="sec-label">Our Story</div>
+    <h1 class="page-title">Built on One Simple<br><em>Honest Idea</em></h1>
+    <p class="lead">We looked at every "earn online" platform and saw the same pattern — fake promises, hidden investments, platforms that disappear after taking people's money. We built CreateAndEarn to be the opposite of all of that.</p>
+    <div class="pill"><span class="pill-dot"></span> Launched 2026 — built in public</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row fade-in">
+    <div class="stat-box"><div class="n">$0</div><div class="l">Required to Join</div></div>
+    <div class="stat-box"><div class="n">100%</div><div class="l">Ad-Revenue Funded</div></div>
+    <div class="stat-box"><div class="n">24hr</div><div class="l">Withdrawal Processing</div></div>
+    <div class="stat-box"><div class="n">Public</div><div class="l">Monthly Reports</div></div>
+  </div>
+
+  <!-- OUR STORY -->
+  <div class="story-block fade-in">
+    <h2>Why We Built This</h2>
+    <p>The internet is full of platforms that promise you can earn money by watching ads, completing tasks, or "mining" some coin — and then either pay tiny amounts for weeks before locking your withdrawal, or disappear entirely. We experienced this firsthand and decided to do something different.</p>
+    <p>CreateAndEarn is funded entirely by advertising revenue. When visitors read creator content and see ads, advertisers pay us. We share that revenue with the creators who made the content and with the task earners who helped grow the platform's engagement. There is no other source of money — which means there is no secret investment scheme, no Ponzi structure, and no way for us to pay you more than we earn.</p>
+    <p>The streak system exists specifically to separate genuine daily users from people gaming the system. The harder it is to maintain your streak, the more each surviving user's points are worth when the conversion milestone hits. It's the fairest model we could design.</p>
+  </div>
+
+  <!-- VALUES -->
+  <div class="sec-label fade-in" style="margin-bottom:16px">What We Stand For</div>
+  <div class="values-grid fade-in">
+    <div class="value-card">
+      <span class="value-ico">🔍</span>
+      <h3>Full Transparency</h3>
+      <p>Monthly financial reports published publicly. Every payout is documented. No numbers are hidden or rounded in our favor.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">🛡️</span>
+      <h3>Zero Investment</h3>
+      <p>We will never ask you for money. Not now, not ever. Our revenue comes from advertisers — that's the only business model we operate.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">⚖️</span>
+      <h3>Fair Rules</h3>
+      <p>The rules are the same for everyone. No VIP tiers, no pay-to-win mechanics, no preferential treatment. Consistency is the only advantage.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">📈</span>
+      <h3>Shared Growth</h3>
+      <p>When the platform grows, every user benefits automatically. Higher traffic means higher ad revenue means higher task rates and point values.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">🆘</span>
+      <h3>Real Support</h3>
+      <p>Every support ticket is answered by a human within 48 hours. No bots. No auto-responses. We read every message personally.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">🔒</span>
+      <h3>Honest Limitations</h3>
+      <p>We tell you when earnings are small. We show you the real math. We never inflate numbers to make the platform look better than it is.</p>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap fade-in">
+    <h2>Ready to Join?</h2>
+    <p>Free to join, free to earn, free to withdraw. That's the whole promise.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="/" class="btn btn-fill">Create Free Account →</a>
+      <a href="/contact.html" class="btn btn-ghost">Contact Us</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="ft-grid">
+    <div class="ft-brand">
+      <a href="/" class="logo">Create<em style="font-style:italic;color:var(--accent)">&</em>Earn</a>
+      <p>A transparent, no-investment content platform. Creators and earners make real money from advertising — honestly.</p>
+    </div>
+    <div class="ft-col">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="/#tasks">Task Center</a></li>
+        <li><a href="/#creators">Creator Program</a></li>
+        <li><a href="/#withdraw">Withdrawals</a></li>
+        <li><a href="/#transparency">Transparency Hub</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h5>Legal</h5>
+      <ul>
+        <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+        <li><a href="/terms.html">Terms of Service</a></li>
+        <li><a href="/about.html">About Us</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h5>Support</h5>
+      <ul>
+        <li><a href="/contact.html">Submit a Ticket</a></li>
+        <li><a href="/#faq">FAQ</a></li>
+        <li><a href="mailto:createandearn7@gmail.com">Email Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <p>© 2026 CreateAndEarn. Not a financial investment product.</p>
+    <p style="color:var(--green)">createandearn7@gmail.com</p>
+  </div>
+</footer>
+
+<script>
+const io=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:0.08});
+document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
