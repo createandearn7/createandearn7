@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Task Center — CreateAndEarn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090e;--surface:#111118;--card:#17171f;--border:#252532;--accent:#6c63ff;--green:#00c896;--rose:#f05d7a;--gold:#e8b84b;--text:#ededf5;--sub:#9090a8;--faint:#3a3a50;--radius:14px;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;min-height:100vh;}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;line-height:1.2;letter-spacing:-0.3px;}
+p{max-width:60ch;color:var(--sub);}strong{color:var(--text);font-weight:600;}a{color:var(--accent);text-decoration:none;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--text);}
+.logo em{font-style:italic;color:var(--accent);}
+nav ul{display:flex;gap:28px;list-style:none;align-items:center;}
+nav ul a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s;}
+nav ul a:hover,nav ul a.active{color:var(--text);}
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;}
+.nav-name{font-size:0.85rem;font-weight:600;color:var(--text);}
+.btn{display:inline-block;padding:9px 22px;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
+.btn-fill{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(108,99,255,0.28);}
+.btn-fill:hover{transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent);background:rgba(108,99,255,0.05);}
+.btn-sm{padding:7px 16px;font-size:0.8rem;border-radius:8px;}
+
+.app-shell{padding-top:72px;}
+.app-body{max-width:860px;margin:0 auto;padding:56px 48px 100px;}
+.sec-label{font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block;}
+.page-header{margin-bottom:36px;}
+.page-header h1{font-size:clamp(1.8rem,3vw,2.4rem);color:var(--text);margin-bottom:6px;}
+.page-header p{font-size:0.9rem;max-width:100%;}
+
+/* STREAK BANNER */
+.streak-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:28px;flex-wrap:wrap;}
+.streak-banner .sb-left h3{font-family:'Instrument Sans',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:4px;}
+.streak-banner .sb-left p{font-size:0.82rem;max-width:100%;margin:0;}
+.streak-days{display:flex;gap:8px;}
+.streak-day{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--sub);background:rgba(255,255,255,0.04);border:1px solid var(--border);flex-direction:column;gap:2px;}
+.streak-day.done{background:rgba(0,200,150,0.12);border-color:rgba(0,200,150,0.3);color:var(--green);}
+.streak-day.today{background:rgba(108,99,255,0.15);border-color:var(--accent);color:var(--accent);}
+.streak-day.missed{background:rgba(240,93,122,0.08);border-color:rgba(240,93,122,0.2);color:var(--rose);}
+.sb-right{text-align:center;flex-shrink:0;}
+.sb-right .big{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:700;color:var(--text);line-height:1;}
+.sb-right .big em{font-style:italic;color:var(--accent);}
+.sb-right span{font-size:0.72rem;color:var(--sub);}
+
+/* PROGRESS */
+.prog-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin-bottom:28px;}
+.prog-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.prog-top h3{font-family:'Instrument Sans',sans-serif;font-size:0.88rem;font-weight:700;color:var(--text);}
+.prog-top .reset{font-size:0.78rem;color:var(--sub);display:flex;align-items:center;gap:6px;}
+.reset strong{color:var(--gold);}
+.prog-track{height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:10px;}
+.prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .6s ease;}
+.prog-stat{font-size:0.78rem;color:var(--sub);text-align:right;}
+
+/* TASK CARDS */
+.task-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;transition:border-color .2s,transform .2s;position:relative;overflow:hidden;}
+.task-card:hover{border-color:var(--faint);}
+.task-card.done{opacity:0.65;border-color:rgba(0,200,150,0.2);background:rgba(0,200,150,0.02);}
+.task-card.done:hover{transform:none;border-color:rgba(0,200,150,0.25);}
+.task-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px;}
+.task-tag{display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:5px;margin-bottom:10px;}
+.tag-login{background:rgba(108,99,255,0.08);color:var(--accent);}
+.tag-like{background:rgba(240,93,122,0.1);color:var(--rose);}
+.tag-follow{background:rgba(108,99,255,0.1);color:var(--accent);}
+.tag-comment{background:rgba(0,200,150,0.1);color:var(--green);}
+.tag-share{background:rgba(232,184,75,0.1);color:var(--gold);}
+.task-card h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:6px;font-family:'Instrument Sans',sans-serif;}
+.task-card>p{font-size:0.83rem;margin-bottom:20px;max-width:100%;}
+.task-foot{display:flex;justify-content:space-between;align-items:flex-end;padding-top:14px;border-top:1px solid var(--border);}
+.task-reward{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--gold);}
+.task-reward small{font-family:'Instrument Sans',sans-serif;font-size:0.7rem;color:var(--sub);font-weight:400;display:block;line-height:1.4;}
+.growth-note{font-size:0.7rem;color:var(--gold);background:rgba(232,184,75,0.08);border:1px solid rgba(232,184,75,0.18);border-radius:4px;padding:2px 6px;display:inline-block;margin-top:4px;}
+.task-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.task-time{font-size:0.75rem;color:var(--sub);}
+.claim-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.83rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.claim-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,99,255,0.35);}
+.claim-btn:disabled{background:var(--faint);color:var(--sub);cursor:default;transform:none;box-shadow:none;}
+.done-badge{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.25);color:var(--green);font-size:0.78rem;font-weight:700;padding:7px 16px;border-radius:8px;white-space:nowrap;}
+.task-pts-val{font-family:'Fraunces',serif;font-size:1rem;font-weight:700;}
+
+/* NOTICE */
+.cap-notice{background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.18);border-radius:10px;padding:16px 20px;font-size:0.83rem;color:var(--sub);margin-bottom:28px;}
+.cap-notice strong{color:var(--accent);}
+.warn-box{background:rgba(240,93,122,0.05);border:1px solid rgba(240,93,122,0.18);border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:0.82rem;color:var(--sub);}
+.warn-box strong{color:var(--rose);}
+
+/* ANTI-ABUSE */
+.abuse-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-top:32px;}
+.abuse-box h4{font-family:'Instrument Sans',sans-serif;font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:12px;}
+.abuse-box ul{list-style:none;font-size:0.82rem;color:var(--sub);line-height:2;}
+
+/* LOADING */
+#loading{display:flex;align-items:center;justify-content:center;min-height:60vh;color:var(--sub);font-size:0.9rem;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:960px){nav{padding:14px 24px;}.app-body{padding:48px 24px 80px;}}
+@media(max-width:600px){nav ul{display:none;}.app-body{padding:40px 16px 80px;}.streak-banner{flex-direction:column;}.streak-days{flex-wrap:wrap;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="dashboard.html" class="logo">Create<em>&</em>Earn</a>
+  <ul>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="tasks.html" class="active">Tasks</a></li>
+    <li><a href="withdraw.html">Withdraw</a></li>
+    <li><a href="profile.html">Profile</a></li>
+  </ul>
+  <div class="nav-user">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <span class="nav-name" id="nav-name">Loading…</span>
+    <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<div class="app-shell">
+  <div id="loading"><div class="spinner"></div> Loading your tasks…</div>
+  <div class="app-body" id="app-body" style="display:none;">
+
+    <div class="page-header">
+      <span class="sec-label">Task Earner Program</span>
+      <h1>Daily Task Center</h1>
+      <p>Complete all 5 tasks before midnight to keep your streak alive and claim your daily points.</p>
+    </div>
+
+    <!-- STREAK WARNING -->
+    <div class="warn-box" id="streak-warn" style="display:none;">
+      💀 <strong>Streak at risk!</strong> You have an active streak but haven't finished today's tasks. Missing midnight permanently resets your entire balance to zero.
+    </div>
+
+    <!-- STREAK BANNER -->
+    <div class="streak-banner">
+      <div class="sb-left">
+        <h3>🔥 Current Streak</h3>
+        <p id="streak-sub">Complete all tasks before midnight to keep it alive.</p>
+        <div class="streak-days" id="streak-dots" style="margin-top:14px;"></div>
+      </div>
+      <div class="sb-right">
+        <div class="big"><em id="streak-num">0</em></div>
+        <span>day streak</span>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="prog-section">
+      <div class="prog-top">
+        <h3 id="prog-title">Today's Progress — 0 / 5 tasks</h3>
+        <div class="reset">Resets in <strong id="countdown">--:--:--</strong></div>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="prog-stat" id="prog-stat">0% complete — <span id="pts-today">0</span> pts earned today</div>
+    </div>
+
+    <!-- CAP NOTICE -->
+    <div class="cap-notice">
+      <strong>How Points Work:</strong> Points you earn accumulate and convert to USDT when the platform hits 1,000,000 active users. <strong>The fewer streak survivors, the higher each point is worth.</strong> Early consistent users get the best conversion rates.
+    </div>
+
+    <!-- TASK CARDS -->
+    <div id="tasks-container"></div>
+
+    <!-- ANTI-ABUSE -->
+    <div class="abuse-box">
+      <h4>📌 Anti-Abuse Rules</h4>
+      <ul>
+        <li>✓ Bot or script-based task completion = permanent ban</li>
+        <li>✓ Multiple accounts per device = all points forfeited</li>
+        <li>✓ VPN manipulation = task rewards suspended</li>
+        <li>✓ Missing a streak day = full balance and points reset to zero</li>
+        <li>✓ All deductions explained in writing, appealable within 7 days</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",
+  authDomain:"createandearn-b7502.firebaseapp.com",
+  projectId:"createandearn-b7502",
+  storageBucket:"createandearn-b7502.firebasestorage.app",
+  messagingSenderId:"311184359792",
+  appId:"1:311184359792:web:3b15ad30849e5645390fb5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const TASKS = [
+  {id:'login', tag:'tag-login', icon:'🔐', label:'Daily Login', title:'Claim Daily Login Bonus', desc:'Visit the task center and claim your daily bonus. Must be done every day — this also registers your streak for the day.', pts:10, cap:'Once per day · resets midnight', time:'~1 min'},
+  {id:'like',  tag:'tag-like',  icon:'❤️', label:'Like Task',   title:'Like 20 Posts', desc:'Like 20 different posts from the creator feed. Must be genuinely different — duplicate and spam likes are auto-detected and not counted.', pts:20, cap:'Cap: 20 likes/day · resets midnight', time:'~4 min'},
+  {id:'follow',tag:'tag-follow',icon:'👣', label:'Follow Task', title:'Follow 5 Creators', desc:'Follow 5 new creators you haven\'t followed before. Helps grow creator reach and discovery. Following the same account twice has no effect.', pts:15, cap:'Cap: 5 follows/day · resets midnight', time:'~2 min'},
+  {id:'comment',tag:'tag-comment',icon:'💬',label:'Comment Task',title:'Leave 5 Comments', desc:'Leave 5 genuine comments of at least 15 characters each on different posts. Copy-paste, single-word, and emoji-only comments are automatically rejected.', pts:25, cap:'Cap: 5 comments/day · resets midnight', time:'~6 min'},
+  {id:'share', tag:'tag-share', icon:'🔗', label:'Share Task',  title:'Share Posts Externally', desc:'Share 2 posts to any external platform — WhatsApp, Facebook, X, or Telegram. Verified via our tracking link. Unverified shares are not credited.', pts:20, cap:'Cap: 2 shares/day · resets midnight', time:'~2 min'},
+];
+const TOTAL_PTS = TASKS.reduce((a,t)=>a+t.pts,0); // 90
+
+let currentUser=null, userData=null;
+
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function yesterdayKey(){const d=new Date();d.setDate(d.getDate()-1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+function updateCountdown(){
+  const now=new Date(),m=new Date();m.setHours(24,0,0,0);
+  const diff=m-now,h=Math.floor(diff/3600000),min=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+  document.getElementById('countdown').textContent=`${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+setInterval(updateCountdown,1000);updateCountdown();
+
+function buildStreakDots(streak){
+  const c=document.getElementById('streak-dots');c.innerHTML='';
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  for(let i=0;i<7;i++){
+    const d=document.createElement('div');
+    if(i<streak%7){d.className='streak-day done';d.innerHTML=`<span>✓</span><span style="font-size:0.6rem">${days[i]}</span>`;}
+    else if(i===streak%7&&streak>0){d.className='streak-day today';d.innerHTML=`<span>→</span><span style="font-size:0.6rem">${days[i]}</span>`;}
+    else{d.className='streak-day';d.innerHTML=`<span>·</span><span style="font-size:0.6rem">${days[i]}</span>`;}
+    c.appendChild(d);
+  }
+}
+
+function renderTasks(completedToday){
+  const container=document.getElementById('tasks-container');
+  container.innerHTML='';
+  let todayPts=0;
+  completedToday.forEach(id=>{const t=TASKS.find(x=>x.id===id);if(t)todayPts+=t.pts;});
+  const done=completedToday.length;
+  document.getElementById('prog-title').textContent=`Today's Progress — ${done} / 5 tasks`;
+  document.getElementById('prog-fill').style.width=`${Math.round(done/5*100)}%`;
+  document.getElementById('prog-stat').innerHTML=`${Math.round(done/5*100)}% complete — <span id="pts-today">${todayPts}</span> pts earned today`;
+
+  TASKS.forEach(task=>{
+    const isDone=completedToday.includes(task.id);
+    const card=document.createElement('div');
+    card.className=`task-card${isDone?' done':''}`;
+    card.innerHTML=`
+      <span class="task-tag ${task.tag}">${task.icon} ${task.label}</span>
+      <div class="task-top">
+        <div style="flex:1;">
+          <h3>${task.title}</h3>
+          <p>${task.desc}</p>
+        </div>
+      </div>
+      <div class="task-foot">
+        <div class="task-reward">
+          +${task.pts} pts
+          <small>${task.cap}</small>
+          <span class="growth-note">↑ value grows with traffic</span>
+        </div>
+        <div class="task-right">
+          <span class="task-time">${task.time}</span>
+          ${isDone
+            ? `<span class="done-badge">✓ Claimed</span>`
+            : `<button class="claim-btn" data-id="${task.id}" data-pts="${task.pts}">Claim +${task.pts} pts →</button>`
+          }
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  // Attach handlers
+  container.querySelectorAll('.claim-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>claimTask(btn.dataset.id,parseInt(btn.dataset.pts),btn));
+  });
+}
+
+async function claimTask(taskId, pts, btn){
+  if(!currentUser||!userData)return;
+  btn.disabled=true;btn.textContent='Claiming…';
+
+  const today=todayKey();
+  const ref=doc(db,'users',currentUser.uid);
+  const snap=await getDoc(ref);
+  const data=snap.data();
+  const taskDays=data.taskDays||{};
+  const completedToday=taskDays[today]||[];
+
+  if(completedToday.includes(taskId)){btn.textContent='Already done';return;}
+
+  const newCompleted=[...completedToday,taskId];
+  const newTotalPoints=(data.totalPoints||0)+pts;
+
+  // Streak logic
+  let streak=data.streak||0;
+  const lastDay=data.lastTaskDay||'';
+  const yesterday=yesterdayKey();
+  if(lastDay===yesterday){streak+=1;}
+  else if(lastDay!==today){streak=1;}
+  // else same day — keep streak
+
+  await updateDoc(ref,{
+    totalPoints:newTotalPoints,
+    streak:streak,
+    lastTaskDay:today,
+    [`taskDays.${today}`]:newCompleted,
+    lastUpdated:serverTimestamp()
+  });
+
+  userData={...data,totalPoints:newTotalPoints,streak,lastTaskDay:today,taskDays:{...taskDays,[today]:newCompleted}};
+
+  // Refresh UI
+  document.getElementById('streak-num').textContent=streak;
+  buildStreakDots(streak);
+  document.getElementById('streak-sub').textContent=`${streak}-day streak. Keep going — don't miss a single day.`;
+  renderTasks(newCompleted);
+
+  if(newCompleted.length===5){
+    document.getElementById('streak-warn').style.display='none';
+    document.getElementById('streak-sub').textContent=`✅ All done for today! ${streak}-day streak secured.`;
+  }
+}
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='index.html';return;}
+  currentUser=user;
+  const name=user.displayName||user.email.split('@')[0];
+  document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('nav-name').textContent=name;
+
+  const ref=doc(db,'users',user.uid);
+  let snap=await getDoc(ref);
+  if(!snap.exists()){
+    await setDoc(ref,{fullName:user.displayName||'',email:user.email,role:'',balance:0,streak:0,totalPoints:0,totalWithdrawn:0,taskDays:{},createdAt:serverTimestamp()});
+    snap=await getDoc(ref);
+  }
+  userData=snap.data();
+
+  // Streak broken check
+  const today=todayKey(),yesterday=yesterdayKey();
+  const lastDay=userData.lastTaskDay||'';
+  if(lastDay&&lastDay!==today&&lastDay!==yesterday){
+    await updateDoc(ref,{totalPoints:0,streak:0,lastTaskDay:'',taskDays:{}});
+    userData={...userData,totalPoints:0,streak:0,lastTaskDay:'',taskDays:{}};
+    alert('💀 You missed a day — your entire balance and all points have been permanently reset to zero. Start your streak fresh from today.');
+  }
+
+  const streak=userData.streak||0;
+  const taskDays=userData.taskDays||{};
+  const completedToday=taskDays[today]||[];
+
+  document.getElementById('streak-num').textContent=streak;
+  buildStreakDots(streak);
+  document.getElementById('streak-sub').textContent=
+    completedToday.length===5?`✅ All done! ${streak}-day streak secured for today.`:
+    streak>0?`${streak}-day streak active — don't miss today.`:
+    'Complete all 5 tasks today to start your first streak.';
+
+  if(streak>0&&completedToday.length<5){document.getElementById('streak-warn').style.display='block';}
+
+  renderTasks(completedToday);
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app-body').style.display='block';
+});
+
+window.handleLogout=async()=>{await signOut(auth);window.location.href='index.html';};
+</script>
+</body>
+</html>

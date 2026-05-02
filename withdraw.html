@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Withdraw — CreateAndEarn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090e;--surface:#111118;--card:#17171f;--border:#252532;--accent:#6c63ff;--green:#00c896;--rose:#f05d7a;--gold:#e8b84b;--text:#ededf5;--sub:#9090a8;--faint:#3a3a50;--radius:14px;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;min-height:100vh;}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;line-height:1.2;letter-spacing:-0.3px;}
+p{max-width:60ch;color:var(--sub);}strong{color:var(--text);font-weight:600;}a{color:var(--accent);text-decoration:none;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--text);}
+.logo em{font-style:italic;color:var(--accent);}
+nav ul{display:flex;gap:28px;list-style:none;align-items:center;}
+nav ul a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s;}
+nav ul a:hover,nav ul a.active{color:var(--text);}
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;}
+.nav-name{font-size:0.85rem;font-weight:600;color:var(--text);}
+.btn{display:inline-block;padding:9px 22px;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
+.btn-fill{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(108,99,255,0.28);}
+.btn-fill:hover{transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent);background:rgba(108,99,255,0.05);}
+.btn-sm{padding:7px 16px;font-size:0.8rem;border-radius:8px;}
+
+.app-shell{padding-top:72px;}
+.app-body{max-width:780px;margin:0 auto;padding:56px 48px 100px;}
+.sec-label{font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block;}
+.page-header{margin-bottom:40px;padding-bottom:36px;border-bottom:1px solid var(--border);}
+.page-header h1{font-size:clamp(1.8rem,3vw,2.4rem);color:var(--text);margin-bottom:6px;}
+.page-header p{font-size:0.9rem;max-width:100%;}
+
+/* BALANCE CARDS */
+.balance-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:36px;}
+.bal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;}
+.bal-card .bc-label{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:8px;}
+.bal-card .bc-val{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px;}
+.bal-card .bc-val.green{color:var(--green);}
+.bal-card .bc-val.gold{color:var(--gold);}
+.bal-card .bc-note{font-size:0.75rem;color:var(--sub);}
+
+/* WITHDRAW FORM */
+.withdraw-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin-bottom:24px;}
+.withdraw-card h3{font-family:'Instrument Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:22px;}
+.fg{margin-bottom:16px;}
+.fg label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--sub);margin-bottom:5px;}
+.fg input,.fg select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:0.88rem;outline:none;transition:border-color .2s;}
+.fg input:focus,.fg select:focus{border-color:var(--accent);}
+.fg input::placeholder{color:var(--faint);}
+.fg .hint{font-size:0.73rem;color:var(--sub);margin-top:5px;}
+.submit-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.92rem;cursor:pointer;transition:all .2s;box-shadow:0 6px 24px rgba(108,99,255,0.28);margin-top:8px;}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 10px 32px rgba(108,99,255,0.38);}
+.submit-btn:disabled{background:var(--faint);color:var(--sub);cursor:not-allowed;transform:none;box-shadow:none;}
+.fine-print{font-size:0.72rem;color:var(--sub);margin-top:12px;max-width:100%;line-height:1.6;}
+
+/* RULES TABLE */
+.rules-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px 26px;margin-bottom:24px;}
+.rules-card h4{font-family:'Instrument Sans',sans-serif;font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:16px;}
+.wr-row{display:flex;justify-content:space-between;padding:9px 0;font-size:0.83rem;border-bottom:1px solid var(--border);}
+.wr-row:last-child{border:none;}
+.wk{color:var(--sub);}
+.wv{color:var(--text);font-weight:500;}
+.wv.green{color:var(--green);}
+
+/* CRYPTO CARD */
+.crypto-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 22px;display:flex;align-items:center;gap:14px;max-width:240px;margin-bottom:28px;transition:border-color .2s;}
+.crypto-card:hover{border-color:var(--accent);}
+.crypto-ico{font-size:1.8rem;}
+.crypto-name{font-weight:700;font-size:1rem;color:var(--text);}
+.crypto-note{font-size:0.75rem;color:var(--sub);margin-top:2px;}
+
+/* HISTORY */
+.history-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px 26px;}
+.history-card h4{font-family:'Instrument Sans',sans-serif;font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:16px;}
+.hist-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(37,37,50,0.5);}
+.hist-item:last-child{border-bottom:none;}
+.hist-ico{width:30px;height:30px;border-radius:50%;background:rgba(0,200,150,0.1);display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;}
+.hist-info{flex:1;}
+.hist-info strong{display:block;font-size:0.83rem;color:var(--text);}
+.hist-info span{font-size:0.73rem;color:var(--sub);}
+.hist-amt{font-family:'Fraunces',serif;font-weight:700;color:var(--green);font-size:0.95rem;}
+.empty-state{padding:28px 0;text-align:center;color:var(--sub);font-size:0.85rem;}
+.empty-state .ei{font-size:2rem;display:block;margin-bottom:8px;opacity:0.4;}
+
+/* CALLOUT */
+.callout-rose{background:rgba(240,93,122,0.05);border:1px solid rgba(240,93,122,0.18);border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:0.82rem;color:var(--sub);}
+.callout-rose strong{color:var(--rose);}
+.callout-green{background:rgba(0,200,150,0.05);border:1px solid rgba(0,200,150,0.18);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:0.82rem;color:var(--sub);}
+.callout-green strong{color:var(--green);}
+
+/* LOCKED NOTICE */
+.locked-notice{background:rgba(232,184,75,0.05);border:1px solid rgba(232,184,75,0.18);border-radius:10px;padding:16px 20px;margin-bottom:24px;font-size:0.83rem;color:var(--sub);}
+.locked-notice strong{color:var(--gold);}
+
+#loading{display:flex;align-items:center;justify-content:center;min-height:60vh;color:var(--sub);font-size:0.9rem;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:900px){nav{padding:14px 24px;}.app-body{padding:48px 24px 80px;}.balance-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){nav ul{display:none;}.app-body{padding:40px 16px 80px;}.balance-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="dashboard.html" class="logo">Create<em>&</em>Earn</a>
+  <ul>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="tasks.html">Tasks</a></li>
+    <li><a href="withdraw.html" class="active">Withdraw</a></li>
+    <li><a href="profile.html">Profile</a></li>
+  </ul>
+  <div class="nav-user">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <span class="nav-name" id="nav-name">Loading…</span>
+    <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<div class="app-shell">
+  <div id="loading"><div class="spinner"></div> Loading…</div>
+  <div class="app-body" id="app-body" style="display:none;">
+
+    <div class="page-header">
+      <span class="sec-label">Payments</span>
+      <h1>Withdraw USDT</h1>
+      <p>Creator earnings can be withdrawn any time you hit the minimum. Task points convert at the 1 million user milestone.</p>
+    </div>
+
+    <!-- BALANCES -->
+    <div class="balance-row">
+      <div class="bal-card">
+        <div class="bc-label">Creator Balance</div>
+        <div class="bc-val green" id="bal-creator">$0.00</div>
+        <div class="bc-note">Available to withdraw</div>
+      </div>
+      <div class="bal-card">
+        <div class="bc-label">Task Points</div>
+        <div class="bc-val gold" id="bal-points">0</div>
+        <div class="bc-note">Locked until 1M users 🔒</div>
+      </div>
+      <div class="bal-card">
+        <div class="bc-label">Total Withdrawn</div>
+        <div class="bc-val" id="bal-withdrawn">$0.00</div>
+        <div class="bc-note">USDT TRC-20 lifetime</div>
+      </div>
+    </div>
+
+    <!-- LOCKED NOTICE -->
+    <div class="locked-notice">
+      🔒 <strong>Task Points are locked</strong> — Your <span id="locked-pts">0</span> points will convert to USDT when the platform reaches 1,000,000 active users. Early consistent users get the highest conversion rates.
+    </div>
+
+    <!-- CRYPTO PAYMENT METHOD -->
+    <div class="crypto-card">
+      <div class="crypto-ico">💎</div>
+      <div>
+        <div class="crypto-name">USDT TRC-20</div>
+        <div class="crypto-note">TRON Network · Fast & low fees</div>
+      </div>
+    </div>
+
+    <!-- CALLOUT -->
+    <div class="callout-rose">
+      ⚠️ <strong>Warning:</strong> Only enter a TRC-20 (TRON) wallet address. Sending to the wrong network or wrong address means permanent loss of funds — we cannot recover them.
+    </div>
+
+    <!-- WITHDRAWAL FORM -->
+    <div class="withdraw-card" id="withdraw-form-wrap">
+      <h3>💸 Request Withdrawal</h3>
+      <div class="fg">
+        <label>TRC-20 Wallet Address</label>
+        <input type="text" id="wallet-input" placeholder="T…your TRON wallet address"/>
+        <div class="hint">Must be a TRC-20 (TRON) address starting with T. Double-check before submitting — errors are irreversible.</div>
+      </div>
+      <div class="fg">
+        <label>Amount (USDT)</label>
+        <input type="number" id="amount-input" placeholder="Enter amount (min $4.00)" min="4" step="0.01"/>
+        <div class="hint" id="amount-hint">Available creator balance: <strong id="avail-balance">$0.00</strong></div>
+      </div>
+      <button class="submit-btn" id="submit-btn" onclick="submitWithdrawal()">Submit Withdrawal Request →</button>
+      <p class="fine-print">By submitting, you confirm the wallet address is correct and you accept the Terms of Service. Processed within 24 hours. Network gas fees deducted from amount.</p>
+    </div>
+
+    <!-- RULES -->
+    <div class="rules-card">
+      <h4>📋 Withdrawal Rules</h4>
+      <div class="wr-row"><span class="wk">Minimum amount</span><span class="wv green">$4.00 USDT</span></div>
+      <div class="wr-row"><span class="wk">Network</span><span class="wv">USDT TRC-20 (TRON only)</span></div>
+      <div class="wr-row"><span class="wk">Processing time</span><span class="wv">Within 24 hours</span></div>
+      <div class="wr-row"><span class="wk">Frequency</span><span class="wv">Once every 7 days</span></div>
+      <div class="wr-row"><span class="wk">Our fee</span><span class="wv green">None — zero platform fee</span></div>
+      <div class="wr-row"><span class="wk">Network gas fee</span><span class="wv">Deducted from amount (~$1–2)</span></div>
+      <div class="wr-row"><span class="wk">Task points</span><span class="wv">Locked until 1M active users</span></div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="history-card">
+      <h4>🕐 Withdrawal History</h4>
+      <div id="history-list">
+        <div class="empty-state"><span class="ei">💸</span>No withdrawals yet.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",
+  authDomain:"createandearn-b7502.firebaseapp.com",
+  projectId:"createandearn-b7502",
+  storageBucket:"createandearn-b7502.firebasestorage.app",
+  messagingSenderId:"311184359792",
+  appId:"1:311184359792:web:3b15ad30849e5645390fb5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let currentUser=null, userData=null;
+
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+function renderHistory(history){
+  const list=document.getElementById('history-list');
+  if(!history||history.length===0){list.innerHTML='<div class="empty-state"><span class="ei">💸</span>No withdrawals yet.</div>';return;}
+  list.innerHTML=[...history].reverse().map(h=>`
+    <div class="hist-item">
+      <div class="hist-ico">✓</div>
+      <div class="hist-info">
+        <strong>${h.amount} USDT</strong>
+        <span>${h.wallet.slice(0,8)}…${h.wallet.slice(-6)} · ${h.date}</span>
+      </div>
+      <div class="hist-amt">+$${h.amount}</div>
+    </div>`).join('');
+}
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='index.html';return;}
+  currentUser=user;
+  const name=user.displayName||user.email.split('@')[0];
+  document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('nav-name').textContent=name;
+
+  const ref=doc(db,'users',user.uid);
+  const snap=await getDoc(ref);
+  userData=snap.exists()?snap.data():{};
+
+  const creatorBalance=userData.creatorBalance||0;
+  const totalPoints=userData.totalPoints||0;
+  const totalWithdrawn=userData.totalWithdrawn||0;
+
+  document.getElementById('bal-creator').textContent=`$${creatorBalance.toFixed(2)}`;
+  document.getElementById('bal-points').textContent=totalPoints.toLocaleString();
+  document.getElementById('bal-withdrawn').textContent=`$${totalWithdrawn.toFixed(2)}`;
+  document.getElementById('avail-balance').textContent=`$${creatorBalance.toFixed(2)}`;
+  document.getElementById('locked-pts').textContent=totalPoints.toLocaleString();
+
+  // Disable form if no balance
+  if(creatorBalance<4){
+    document.getElementById('submit-btn').disabled=true;
+    document.getElementById('submit-btn').textContent=`Need $4.00 min — Current: $${creatorBalance.toFixed(2)}`;
+  }
+
+  renderHistory(userData.withdrawalHistory||[]);
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app-body').style.display='block';
+});
+
+window.submitWithdrawal=async()=>{
+  if(!currentUser||!userData)return;
+  const wallet=document.getElementById('wallet-input').value.trim();
+  const amount=parseFloat(document.getElementById('amount-input').value);
+  const balance=userData.creatorBalance||0;
+
+  if(!wallet||!wallet.startsWith('T')||wallet.length<30){alert('Please enter a valid TRC-20 wallet address (starts with T, ~34 characters).');return;}
+  if(!amount||amount<4){alert('Minimum withdrawal is $4.00 USDT.');return;}
+  if(amount>balance){alert(`Insufficient balance. Available: $${balance.toFixed(2)}`);return;}
+
+  // Check 7-day cooldown
+  const lastW=userData.lastWithdrawal;
+  if(lastW){const diff=(Date.now()-new Date(lastW).getTime())/(1000*60*60*24);if(diff<7){alert(`You can only withdraw once every 7 days. Next withdrawal available in ${Math.ceil(7-diff)} days.`);return;}}
+
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;btn.textContent='Processing…';
+
+  const today=todayKey();
+  const record={amount:amount.toFixed(2),wallet,date:today,status:'pending'};
+
+  try{
+    await updateDoc(doc(db,'users',currentUser.uid),{
+      creatorBalance:(balance-amount),
+      totalWithdrawn:(userData.totalWithdrawn||0)+amount,
+      lastWithdrawal:new Date().toISOString(),
+      withdrawalHistory:arrayUnion(record)
+    });
+    userData.creatorBalance=balance-amount;
+    userData.totalWithdrawn=(userData.totalWithdrawn||0)+amount;
+    userData.withdrawalHistory=[...(userData.withdrawalHistory||[]),record];
+
+    document.getElementById('bal-creator').textContent=`$${userData.creatorBalance.toFixed(2)}`;
+    document.getElementById('bal-withdrawn').textContent=`$${userData.totalWithdrawn.toFixed(2)}`;
+    document.getElementById('avail-balance').textContent=`$${userData.creatorBalance.toFixed(2)}`;
+    renderHistory(userData.withdrawalHistory);
+
+    document.getElementById('wallet-input').value='';
+    document.getElementById('amount-input').value='';
+    btn.textContent='✓ Request Submitted';
+    setTimeout(()=>{btn.textContent='Submit Withdrawal Request →';btn.disabled=userData.creatorBalance<4;},3000);
+    alert(`✅ Withdrawal request for $${amount.toFixed(2)} USDT submitted! You will receive it within 24 hours to ${wallet.slice(0,10)}…`);
+  }catch(err){
+    btn.disabled=false;btn.textContent='Submit Withdrawal Request →';
+    alert('Error submitting request. Please try again or contact support.');
+  }
+};
+
+window.handleLogout=async()=>{await signOut(auth);window.location.href='index.html';};
+</script>
+</body>
+</html>
