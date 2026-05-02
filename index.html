@@ -900,12 +900,11 @@ document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      closeModal();
-      window.location.href = 'dashboard.html';
-    } catch (error) {
-      alert("Error: " + error.message);
-    }
+  await signInWithEmailAndPassword(auth, email, password);
+  window.location.href = 'dashboard.html';
+} catch (error) {
+  alert("Error: " + error.message);
+}
   };
 </script>
 </body>
