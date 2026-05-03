@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Feed — CreateAndEarn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090e;--surface:#111118;--card:#17171f;--border:#252532;--accent:#6c63ff;--green:#00c896;--rose:#f05d7a;--gold:#e8b84b;--text:#ededf5;--sub:#9090a8;--faint:#3a3a50;--radius:14px;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;min-height:100vh;}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;line-height:1.2;letter-spacing:-0.3px;}
+p{color:var(--sub);}strong{color:var(--text);font-weight:600;}a{text-decoration:none;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--text);}
+.logo em{font-style:italic;color:var(--accent);}
+nav ul{display:flex;gap:28px;list-style:none;align-items:center;}
+nav ul a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s;}
+nav ul a:hover,nav ul a.active{color:var(--text);}
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}
+.nav-name{font-size:0.85rem;font-weight:600;color:var(--text);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 22px;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
+.btn-fill{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(108,99,255,0.28);}
+.btn-fill:hover{transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent);}
+.btn-sm{padding:7px 16px;font-size:0.8rem;border-radius:8px;}
+.app-shell{padding-top:72px;}
+.feed-wrap{max-width:680px;margin:0 auto;padding:48px 24px 100px;}
+.feed-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;gap:12px;flex-wrap:wrap;}
+.feed-top h1{font-size:1.8rem;color:var(--text);margin-bottom:4px;}
+.feed-top p{font-size:0.85rem;}
+.cat-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.cat-tab{padding:6px 16px;border-radius:100px;font-size:0.78rem;font-weight:600;border:1px solid var(--border);color:var(--sub);background:transparent;cursor:pointer;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
+.cat-tab:hover{border-color:var(--faint);color:var(--text);}
+.cat-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.post-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:16px;transition:border-color .2s;}
+.post-card:hover{border-color:var(--faint);}
+.author-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.author-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#fff;flex-shrink:0;}
+.author-info{flex:1;}
+.author-name{font-size:0.88rem;font-weight:700;color:var(--text);cursor:pointer;}
+.author-time{font-size:0.72rem;color:var(--sub);}
+.follow-btn{font-size:0.72rem;font-weight:700;padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;transition:all .2s;font-family:'Instrument Sans',sans-serif;white-space:nowrap;}
+.follow-btn:hover{border-color:var(--accent);color:var(--accent);}
+.follow-btn.following{border-color:rgba(0,200,150,0.3);color:var(--green);background:rgba(0,200,150,0.06);}
+.post-cat{display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:4px;margin-bottom:8px;}
+.cat-Tech{background:rgba(108,99,255,0.1);color:var(--accent);}
+.cat-Finance{background:rgba(0,200,150,0.1);color:var(--green);}
+.cat-Health{background:rgba(240,93,122,0.1);color:var(--rose);}
+.cat-Entertainment{background:rgba(232,184,75,0.1);color:var(--gold);}
+.cat-Education{background:rgba(108,99,255,0.08);color:#a89cff;}
+.cat-Lifestyle{background:rgba(0,200,150,0.08);color:#5ce8c0;}
+.cat-General{background:rgba(255,255,255,0.05);color:var(--sub);}
+.post-title{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.35;}
+.post-body{font-size:0.85rem;color:var(--sub);line-height:1.65;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.post-body.expanded{display:block;}
+.post-actions{display:flex;align-items:center;gap:4px;padding-top:12px;border-top:1px solid var(--border);}
+.action-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:transparent;color:var(--sub);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
+.action-btn:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.action-btn.liked{color:var(--rose);}
+.action-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.action-btn.liked svg{fill:var(--rose);stroke:var(--rose);}
+.read-more-btn{margin-left:auto;font-size:0.75rem;color:var(--accent);background:none;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif;font-weight:600;}
+.comment-section{border-top:1px solid var(--border);margin-top:14px;padding-top:16px;display:none;}
+.comment-section.open{display:block;}
+.comment-input-row{display:flex;gap:8px;margin-bottom:14px;align-items:flex-start;}
+.c-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff;flex-shrink:0;margin-top:3px;}
+.comment-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:0.82rem;outline:none;resize:none;transition:border-color .2s;}
+.comment-input:focus{border-color:var(--accent);}
+.c-submit{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;flex-shrink:0;transition:opacity .2s;}
+.c-submit:hover{opacity:0.85;}
+.comment-item{display:flex;gap:9px;margin-bottom:10px;}
+.comment-body{flex:1;background:var(--surface);border-radius:8px;padding:9px 12px;}
+.c-author{font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:2px;}
+.c-text{font-size:0.8rem;color:var(--sub);}
+.c-time{font-size:0.68rem;color:var(--faint);margin-top:3px;}
+.no-comments{font-size:0.78rem;color:var(--faint);text-align:center;padding:10px 0;}
+.share-modal{position:fixed;inset:0;z-index:900;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);}
+.share-modal.open{display:flex;}
+.share-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:100%;max-width:380px;}
+.share-box h3{font-size:1rem;color:var(--text);margin-bottom:6px;}
+.share-box>p{font-size:0.82rem;margin-bottom:20px;}
+.share-opts{display:flex;flex-direction:column;gap:10px;}
+.share-opt{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s;font-family:'Instrument Sans',sans-serif;font-size:0.85rem;color:var(--text);font-weight:500;}
+.share-opt:hover{border-color:var(--accent);}
+.share-opt .si{font-size:1.1rem;}
+.share-close{margin-top:14px;width:100%;background:transparent;border:1px solid var(--border);border-radius:8px;padding:9px;color:var(--sub);font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:0.83rem;cursor:pointer;transition:all .2s;}
+.share-close:hover{border-color:var(--faint);color:var(--text);}
+.feed-empty{text-align:center;padding:60px 0;}
+.feed-empty .ei{font-size:3rem;display:block;margin-bottom:14px;opacity:0.35;}
+.feed-empty h3{font-size:1.2rem;color:var(--text);margin-bottom:8px;}
+.feed-empty p{font-size:0.85rem;}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:0.83rem;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:1000;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.green{border-color:rgba(0,200,150,0.35);}
+#loading{display:flex;align-items:center;justify-content:center;min-height:60vh;color:var(--sub);font-size:0.9rem;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:960px){nav{padding:14px 24px;}.feed-wrap{padding:40px 16px 80px;}}
+@media(max-width:600px){nav ul{display:none;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="dashboard.html" class="logo">Create<em>&</em>Earn</a>
+  <ul>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="feed.html" class="active">Feed</a></li>
+    <li><a href="tasks.html">Tasks</a></li>
+    <li><a href="withdraw.html">Withdraw</a></li>
+    <li><a href="profile.html">Profile</a></li>
+  </ul>
+  <div class="nav-user">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <span class="nav-name" id="nav-name">…</span>
+    <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<div class="share-modal" id="share-modal">
+  <div class="share-box">
+    <h3>Share this post</h3>
+    <p>Share it anywhere and it counts toward your daily share task!</p>
+    <div class="share-opts">
+      <a class="share-opt" id="sh-wa" href="#" target="_blank"><span class="si">💬</span>WhatsApp</a>
+      <a class="share-opt" id="sh-tw" href="#" target="_blank"><span class="si">🐦</span>X (Twitter)</a>
+      <a class="share-opt" id="sh-fb" href="#" target="_blank"><span class="si">📘</span>Facebook</a>
+      <a class="share-opt" id="sh-tg" href="#" target="_blank"><span class="si">✈️</span>Telegram</a>
+      <a class="share-opt" id="sh-cp" href="#"><span class="si">🔗</span>Copy Link</a>
+    </div>
+    <button class="share-close" onclick="closeShare()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="app-shell">
+  <div id="loading"><div class="spinner"></div>Loading feed…</div>
+  <div class="feed-wrap" id="feed-wrap" style="display:none;">
+    <div class="feed-top">
+      <div>
+        <h1>Feed</h1>
+        <p>Like, comment &amp; share posts to earn task points automatically.</p>
+      </div>
+      <a href="create-post.html" class="btn btn-fill">✏️ Write a Post</a>
+    </div>
+    <div class="cat-tabs" id="cat-tabs">
+      <button class="cat-tab active" data-cat="all">All</button>
+      <button class="cat-tab" data-cat="Tech">Tech</button>
+      <button class="cat-tab" data-cat="Finance">Finance</button>
+      <button class="cat-tab" data-cat="Health">Health</button>
+      <button class="cat-tab" data-cat="Entertainment">Entertainment</button>
+      <button class="cat-tab" data-cat="Education">Education</button>
+      <button class="cat-tab" data-cat="Lifestyle">Lifestyle</button>
+      <button class="cat-tab" data-cat="General">General</button>
+    </div>
+    <div id="posts-list"></div>
+    <div id="feed-empty" class="feed-empty" style="display:none;">
+      <span class="ei">📭</span>
+      <h3>No posts yet</h3>
+      <p>Be the first to write something. Creators earn from every view.</p>
+      <a href="create-post.html" class="btn btn-fill" style="margin-top:20px;">✏️ Write the First Post</a>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, getDocs, orderBy, query, arrayUnion, arrayRemove, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",authDomain:"createandearn-b7502.firebaseapp.com",projectId:"createandearn-b7502",storageBucket:"createandearn-b7502.firebasestorage.app",messagingSenderId:"311184359792",appId:"1:311184359792:web:3b15ad30849e5645390fb5"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+let currentUser=null, userData=null, sharePostId=null;
+
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function timeAgo(ts){if(!ts)return '';const d=ts.toDate?ts.toDate():new Date(ts);const s=Math.floor((Date.now()-d)/1000);if(s<60)return 'just now';if(s<3600)return `${Math.floor(s/60)}m ago`;if(s<86400)return `${Math.floor(s/3600)}h ago`;return `${Math.floor(s/86400)}d ago`;}
+
+function showToast(msg,cls=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast ${cls} show`;
+  setTimeout(()=>{t.className='toast';},2800);
+}
+
+// ── TASK AUTO-TRACKER ─────────────────────────
+const TASK_CAPS={like:20,comment:5,follow:5,share:2};
+const TASK_PTS={like:20,comment:25,follow:15,share:20};
+
+async function trackAction(type){
+  const today=todayKey();
+  const ref=doc(db,'users',currentUser.uid);
+  const snap=await getDoc(ref);
+  const data=snap.data()||{};
+  const todayData=(data.taskDays||{})[today]||{};
+  const current=todayData[`${type}Count`]||0;
+  if(current>=TASK_CAPS[type])return;
+  const newCount=current+1;
+  const updates={[`taskDays.${today}.${type}Count`]:newCount};
+  if(newCount>=TASK_CAPS[type]){
+    const done=(todayData.completed||[]);
+    if(!done.includes(type)){
+      updates[`taskDays.${today}.completed`]=arrayUnion(type);
+      updates.totalPoints=increment(TASK_PTS[type]);
+      updates.lastTaskDay=today;
+      showToast(`🎉 ${type} task done! +${TASK_PTS[type]} pts earned`,'green');
+    }
+  }
+  await updateDoc(ref,updates);
+}
+
+// ── FOLLOW ────────────────────────────────────
+async function toggleFollow(uid,btn){
+  if(uid===currentUser.uid){showToast("You can't follow yourself 😅");return;}
+  const ref=doc(db,'users',currentUser.uid);
+  const snap=await getDoc(ref);
+  const following=snap.data().following||[];
+  if(following.includes(uid)){
+    await updateDoc(ref,{following:arrayRemove(uid)});
+    btn.textContent='+ Follow';btn.classList.remove('following');
+  } else {
+    await updateDoc(ref,{following:arrayUnion(uid)});
+    btn.textContent='✓ Following';btn.classList.add('following');
+    showToast('✓ Following!');
+    await trackAction('follow');
+  }
+}
+
+// ── LIKE ─────────────────────────────────────
+async function toggleLike(postId,btn,countEl){
+  const ref=doc(db,'posts',postId);
+  const likes=(await getDoc(ref)).data().likes||[];
+  if(likes.includes(currentUser.uid)){
+    await updateDoc(ref,{likes:arrayRemove(currentUser.uid),likeCount:increment(-1)});
+    btn.classList.remove('liked');countEl.textContent=Math.max(0,parseInt(countEl.textContent)-1);
+  } else {
+    await updateDoc(ref,{likes:arrayUnion(currentUser.uid),likeCount:increment(1)});
+    btn.classList.add('liked');countEl.textContent=parseInt(countEl.textContent)+1;
+    await trackAction('like');
+  }
+}
+
+// ── COMMENT ───────────────────────────────────
+async function postComment(postId,input,listEl,countEl){
+  const text=input.value.trim();
+  if(text.length<5){showToast('Comment must be at least 5 characters.');return;}
+  const name=userData.fullName||currentUser.email.split('@')[0];
+  await addDoc(collection(db,'posts',postId,'comments'),{authorId:currentUser.uid,authorName:name,text,createdAt:serverTimestamp()});
+  await updateDoc(doc(db,'posts',postId),{commentCount:increment(1)});
+  countEl.textContent=parseInt(countEl.textContent)+1;
+  input.value='';
+  const el=document.createElement('div');
+  el.className='comment-item';
+  el.innerHTML=`<div class="c-av">${name.charAt(0).toUpperCase()}</div><div class="comment-body"><div class="c-author">${name}</div><div class="c-text">${text}</div><div class="c-time">just now</div></div>`;
+  listEl.insertBefore(el,listEl.firstChild);
+  await trackAction('comment');
+}
+
+async function loadComments(postId,listEl){
+  listEl.innerHTML='<div class="no-comments">Loading…</div>';
+  try{
+    const snap=await getDocs(query(collection(db,'posts',postId,'comments'),orderBy('createdAt','desc')));
+    if(snap.empty){listEl.innerHTML='<div class="no-comments">No comments yet. Be the first!</div>';return;}
+    listEl.innerHTML='';
+    snap.forEach(d=>{
+      const c=d.data();
+      const el=document.createElement('div');el.className='comment-item';
+      el.innerHTML=`<div class="c-av">${(c.authorName||'?').charAt(0).toUpperCase()}</div><div class="comment-body"><div class="c-author">${c.authorName||'Anonymous'}</div><div class="c-text">${c.text}</div><div class="c-time">${timeAgo(c.createdAt)}</div></div>`;
+      listEl.appendChild(el);
+    });
+  }catch(e){listEl.innerHTML='<div class="no-comments">Could not load comments.</div>';}
+}
+
+// ── BUILD CARD ────────────────────────────────
+function buildCard(data,id,following){
+  const isLiked=(data.likes||[]).includes(currentUser.uid);
+  const isFollowing=following.includes(data.authorId);
+  const isOwn=data.authorId===currentUser.uid;
+  const init=(data.authorName||'?').charAt(0).toUpperCase();
+  const myInit=(userData.fullName||currentUser.email.split('@')[0]).charAt(0).toUpperCase();
+
+  const card=document.createElement('div');
+  card.className='post-card';card.dataset.cat=data.category||'General';
+
+  card.innerHTML=`
+    <div class="author-row">
+      <div class="author-av">${init}</div>
+      <div class="author-info">
+        <div class="author-name">${data.authorName||'Anonymous'}</div>
+        <div class="author-time">${timeAgo(data.createdAt)}</div>
+      </div>
+      ${isOwn
+        ?`<span style="font-size:0.72rem;color:var(--sub);border:1px solid var(--border);padding:3px 10px;border-radius:5px;">Your post</span>`
+        :`<button class="follow-btn ${isFollowing?'following':''}" data-uid="${data.authorId}">${isFollowing?'✓ Following':'+ Follow'}</button>`}
+    </div>
+    <span class="post-cat cat-${data.category||'General'}">${data.category||'General'}</span>
+    <div class="post-title">${data.title}</div>
+    <div class="post-body">${data.content}</div>
+    <div class="post-actions">
+      <button class="action-btn like-btn ${isLiked?'liked':''}">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="lc">${data.likeCount||0}</span>
+      </button>
+      <button class="action-btn cmt-btn">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="cc">${data.commentCount||0}</span>
+      </button>
+      <button class="action-btn shr-btn">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share
+      </button>
+      <button class="read-more-btn">Read more</button>
+    </div>
+    <div class="comment-section">
+      <div class="comment-input-row">
+        <div class="c-av">${myInit}</div>
+        <textarea class="comment-input" placeholder="Write a comment (min 5 chars)…" rows="1"></textarea>
+        <button class="c-submit">Post</button>
+      </div>
+      <div class="comments-list"></div>
+    </div>`;
+
+  // Follow
+  const fb=card.querySelector('.follow-btn');
+  if(fb)fb.addEventListener('click',()=>toggleFollow(fb.dataset.uid,fb));
+
+  // Like
+  const lb=card.querySelector('.like-btn'),lc=card.querySelector('.lc');
+  lb.addEventListener('click',()=>toggleLike(id,lb,lc));
+
+  // Comment toggle
+  const cs=card.querySelector('.comment-section'),cl=card.querySelector('.comments-list'),cc=card.querySelector('.cc');
+  card.querySelector('.cmt-btn').addEventListener('click',()=>{
+    const open=cs.classList.toggle('open');
+    if(open)loadComments(id,cl);
+  });
+
+  // Comment submit
+  const ci=card.querySelector('.comment-input');
+  card.querySelector('.c-submit').addEventListener('click',()=>postComment(id,ci,cl,cc));
+  ci.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();postComment(id,ci,cl,cc);}});
+
+  // Read more
+  const pb=card.querySelector('.post-body'),rm=card.querySelector('.read-more-btn');
+  rm.addEventListener('click',()=>{pb.classList.toggle('expanded');rm.textContent=pb.classList.contains('expanded')?'Show less':'Read more';});
+
+  // Share
+  card.querySelector('.shr-btn').addEventListener('click',()=>openShare(id,data.title));
+
+  return card;
+}
+
+// ── SHARE ─────────────────────────────────────
+function openShare(id,title){
+  sharePostId=id;
+  const url=encodeURIComponent(`${location.origin}/post.html?id=${id}`);
+  const txt=encodeURIComponent(`"${title}" — CreateAndEarn`);
+  document.getElementById('sh-wa').href=`https://wa.me/?text=${txt}%20${url}`;
+  document.getElementById('sh-tw').href=`https://twitter.com/intent/tweet?text=${txt}&url=${url}`;
+  document.getElementById('sh-fb').href=`https://www.facebook.com/sharer/sharer.php?u=${decodeURIComponent(url)}`;
+  document.getElementById('sh-tg').href=`https://t.me/share/url?url=${url}&text=${txt}`;
+  const cp=document.getElementById('sh-cp');
+  cp.onclick=async(e)=>{e.preventDefault();await navigator.clipboard.writeText(`${location.origin}/post.html?id=${id}`);showToast('🔗 Link copied!');};
+  document.getElementById('share-modal').classList.add('open');
+}
+window.closeShare=async()=>{
+  document.getElementById('share-modal').classList.remove('open');
+  if(sharePostId){await trackAction('share');showToast('✓ Share counted!','green');sharePostId=null;}
+};
+
+// ── INIT ──────────────────────────────────────
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='index.html';return;}
+  currentUser=user;
+  const uSnap=await getDoc(doc(db,'users',user.uid));
+  userData=uSnap.exists()?uSnap.data():{};
+  const following=userData.following||[];
+  const name=userData.fullName||user.displayName||user.email.split('@')[0];
+  document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('nav-name').textContent=name;
+
+  try{
+    const snap=await getDocs(query(collection(db,'posts'),orderBy('createdAt','desc')));
+    const list=document.getElementById('posts-list');
+    if(snap.empty){document.getElementById('feed-empty').style.display='block';}
+    else{snap.forEach(d=>{list.appendChild(buildCard(d.data(),d.id,following));updateDoc(doc(db,'posts',d.id),{views:increment(1)}).catch(()=>{});});}
+  }catch(e){document.getElementById('feed-empty').style.display='block';}
+
+  // Category filter
+  document.getElementById('cat-tabs').addEventListener('click',e=>{
+    const btn=e.target.closest('.cat-tab');if(!btn)return;
+    document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    const cat=btn.dataset.cat;
+    let visible=0;
+    document.querySelectorAll('.post-card').forEach(c=>{
+      const show=cat==='all'||c.dataset.cat===cat;
+      c.style.display=show?'block':'none';
+      if(show)visible++;
+    });
+    document.getElementById('feed-empty').style.display=visible===0?'block':'none';
+  });
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('feed-wrap').style.display='block';
+});
+
+window.handleLogout=async()=>{await signOut(auth);window.location.href='index.html';};
+</script>
+</body>
+</html>

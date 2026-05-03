@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Write a Post — CreateAndEarn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090e;--surface:#111118;--card:#17171f;--border:#252532;--accent:#6c63ff;--green:#00c896;--rose:#f05d7a;--gold:#e8b84b;--text:#ededf5;--sub:#9090a8;--faint:#3a3a50;--radius:14px;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;min-height:100vh;}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;line-height:1.2;letter-spacing:-0.3px;}
+p{color:var(--sub);}strong{color:var(--text);font-weight:600;}a{text-decoration:none;color:var(--accent);}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--text);}
+.logo em{font-style:italic;color:var(--accent);}
+nav ul{display:flex;gap:28px;list-style:none;align-items:center;}
+nav ul a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s;}
+nav ul a:hover{color:var(--text);}
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}
+.nav-name{font-size:0.85rem;font-weight:600;color:var(--text);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 22px;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
+.btn-fill{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(108,99,255,0.28);}
+.btn-fill:hover{transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent);}
+.btn-sm{padding:7px 16px;font-size:0.8rem;border-radius:8px;}
+
+.app-shell{padding-top:72px;}
+.page-wrap{max-width:700px;margin:0 auto;padding:56px 24px 100px;}
+.sec-label{font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block;}
+.page-header{margin-bottom:36px;}
+.page-header h1{font-size:clamp(1.8rem,3vw,2.4rem);color:var(--text);margin-bottom:6px;}
+.page-header p{font-size:0.9rem;}
+
+/* WRITE AREA */
+.write-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin-bottom:20px;}
+
+/* CHAR COUNTER */
+.field-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+.field-label{font-size:0.72rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--sub);}
+.char-count{font-size:0.72rem;color:var(--faint);}
+.char-count.warn{color:var(--gold);}
+.char-count.over{color:var(--rose);}
+
+.fg{margin-bottom:20px;}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:0.92rem;outline:none;transition:border-color .2s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--faint);}
+.fg textarea{resize:vertical;min-height:280px;line-height:1.7;}
+.fg select{cursor:pointer;}
+.fg .hint{font-size:0.73rem;color:var(--sub);margin-top:6px;}
+
+/* TITLE INPUT SPECIAL */
+#title-input{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--text);background:transparent;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:10px 0;transition:border-color .2s;}
+#title-input:focus{border-color:var(--accent);background:transparent;}
+
+/* PREVIEW */
+.preview-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;display:none;}
+.preview-card.open{display:block;}
+.preview-label{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.preview-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.preview-cat{display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:4px;margin-bottom:10px;background:rgba(108,99,255,0.1);color:var(--accent);}
+.preview-title{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.35;}
+.preview-body{font-size:0.88rem;color:var(--sub);line-height:1.7;white-space:pre-wrap;}
+.preview-author{display:flex;align-items:center;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.preview-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:#fff;}
+.preview-name{font-size:0.82rem;font-weight:600;color:var(--text);}
+
+/* GUIDELINES */
+.guide-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:20px;}
+.guide-card h4{font-family:'Instrument Sans',sans-serif;font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:12px;}
+.guide-list{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.guide-list li{font-size:0.8rem;color:var(--sub);padding-left:16px;position:relative;}
+.guide-list li::before{content:'✓';color:var(--green);position:absolute;left:0;font-size:0.75rem;}
+
+/* EARN NOTE */
+.earn-note{background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.18);border-radius:10px;padding:16px 20px;margin-bottom:24px;font-size:0.83rem;}
+.earn-note strong{color:var(--accent);display:block;margin-bottom:4px;}
+.earn-note p{margin:0;font-size:0.82rem;}
+
+/* PUBLISH ROW */
+.publish-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.publish-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.92rem;cursor:pointer;transition:all .2s;box-shadow:0 6px 24px rgba(108,99,255,0.28);}
+.publish-btn:hover{transform:translateY(-1px);box-shadow:0 10px 32px rgba(108,99,255,0.38);}
+.publish-btn:disabled{background:var(--faint);color:var(--sub);cursor:not-allowed;transform:none;box-shadow:none;}
+.preview-toggle{background:transparent;border:1px solid var(--border);border-radius:10px;padding:12px 22px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:0.88rem;cursor:pointer;color:var(--text);transition:all .2s;}
+.preview-toggle:hover{border-color:var(--accent);}
+
+/* SUCCESS */
+.success-screen{display:none;text-align:center;padding:60px 0;}
+.success-screen.open{display:block;}
+.success-icon{font-size:4rem;display:block;margin-bottom:16px;}
+.success-screen h2{font-size:1.8rem;color:var(--text);margin-bottom:10px;}
+.success-screen p{font-size:0.9rem;margin-bottom:28px;}
+.success-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+#loading{display:flex;align-items:center;justify-content:center;min-height:60vh;color:var(--sub);font-size:0.9rem;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:960px){nav{padding:14px 24px;}.page-wrap{padding:48px 16px 80px;}}
+@media(max-width:600px){nav ul{display:none;}.publish-row{flex-direction:column;align-items:stretch;}.publish-row button{width:100%;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="dashboard.html" class="logo">Create<em>&</em>Earn</a>
+  <ul>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="feed.html">Feed</a></li>
+    <li><a href="tasks.html">Tasks</a></li>
+    <li><a href="withdraw.html">Withdraw</a></li>
+    <li><a href="profile.html">Profile</a></li>
+  </ul>
+  <div class="nav-user">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <span class="nav-name" id="nav-name">…</span>
+    <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<div class="app-shell">
+  <div id="loading"><div class="spinner"></div>Loading…</div>
+
+  <div class="page-wrap" id="page-wrap" style="display:none;">
+
+    <!-- WRITE FORM -->
+    <div id="write-form">
+      <div class="page-header">
+        <span class="sec-label">Creator Program</span>
+        <h1>Write a Post</h1>
+        <p>Share your knowledge. Every view earns you a share of ad revenue.</p>
+      </div>
+
+      <div class="earn-note">
+        <strong>💰 How You Earn</strong>
+        <p>Creators earn 30–40% of net ad revenue generated by their posts. The more views your post gets, the more you earn. Revenue is credited in real time to your Creator Balance.</p>
+      </div>
+
+      <div class="write-card">
+        <!-- CATEGORY -->
+        <div class="fg">
+          <div class="field-head"><span class="field-label">Category</span></div>
+          <select id="cat-input">
+            <option value="">— Pick a category —</option>
+            <option value="Tech">Tech</option>
+            <option value="Finance">Finance</option>
+            <option value="Health">Health</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Education">Education</option>
+            <option value="Lifestyle">Lifestyle</option>
+            <option value="General">General</option>
+          </select>
+        </div>
+
+        <!-- TITLE -->
+        <div class="fg">
+          <div class="field-head">
+            <span class="field-label">Title</span>
+            <span class="char-count" id="title-count">0 / 100</span>
+          </div>
+          <input type="text" id="title-input" placeholder="Write a clear, compelling title…" maxlength="100"/>
+          <div class="hint">A good title is specific and makes someone want to read. Aim for 40–80 characters.</div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="fg" style="margin-bottom:0;">
+          <div class="field-head">
+            <span class="field-label">Content</span>
+            <span class="char-count" id="content-count">0 / 3000</span>
+          </div>
+          <textarea id="content-input" placeholder="Write your post here. Share something genuinely useful, interesting, or entertaining. Posts with real value get more views and earn more.&#10;&#10;Minimum 100 characters. Maximum 3000." maxlength="3000"></textarea>
+          <div class="hint">Minimum 100 characters. No plagiarism. No copy-paste from other sites. Write in your own words.</div>
+        </div>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="preview-card" id="preview-card">
+        <div class="preview-label">Preview</div>
+        <span class="preview-cat" id="pv-cat">General</span>
+        <div class="preview-title" id="pv-title">Your title will appear here</div>
+        <div class="preview-body" id="pv-body">Your content will appear here…</div>
+        <div class="preview-author">
+          <div class="preview-av" id="pv-av">?</div>
+          <span class="preview-name" id="pv-name">You</span>
+          <span style="font-size:0.72rem;color:var(--sub);margin-left:6px;">· just now</span>
+        </div>
+      </div>
+
+      <!-- GUIDELINES -->
+      <div class="guide-card">
+        <h4>📋 Content Guidelines</h4>
+        <ul class="guide-list">
+          <li>Write in your own words — no copy-pasting from other websites</li>
+          <li>Minimum 100 characters of original content</li>
+          <li>No spam, repeated content, or bulk AI-generated posts</li>
+          <li>No hate speech, explicit content, or harassment</li>
+          <li>Posts that violate guidelines are removed and earnings withheld</li>
+          <li>High-quality posts get promoted in the feed and earn more</li>
+        </ul>
+      </div>
+
+      <div class="publish-row">
+        <button class="publish-btn" id="publish-btn" onclick="publishPost()">Publish Post →</button>
+        <button class="preview-toggle" id="preview-toggle" onclick="togglePreview()">👁 Preview</button>
+        <a href="feed.html" class="btn btn-ghost">Cancel</a>
+      </div>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div class="success-screen" id="success-screen">
+      <span class="success-icon">🎉</span>
+      <h2>Post Published!</h2>
+      <p>Your post is now live on the feed. Every view earns you ad revenue credited to your Creator Balance.</p>
+      <div class="success-btns">
+        <a href="feed.html" class="btn btn-fill">View in Feed →</a>
+        <a href="create-post.html" class="btn btn-ghost">Write Another Post</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, addDoc, updateDoc, increment, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",authDomain:"createandearn-b7502.firebaseapp.com",projectId:"createandearn-b7502",storageBucket:"createandearn-b7502.firebasestorage.app",messagingSenderId:"311184359792",appId:"1:311184359792:web:3b15ad30849e5645390fb5"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+let currentUser=null, userData=null, previewing=false;
+
+// Char counters
+document.getElementById('title-input').addEventListener('input',e=>{
+  const n=e.target.value.length;
+  const el=document.getElementById('title-count');
+  el.textContent=`${n} / 100`;
+  el.className='char-count'+(n>80?' warn':'')+(n>=100?' over':'');
+  if(previewing)document.getElementById('pv-title').textContent=e.target.value||'Your title will appear here';
+});
+document.getElementById('content-input').addEventListener('input',e=>{
+  const n=e.target.value.length;
+  const el=document.getElementById('content-count');
+  el.textContent=`${n} / 3000`;
+  el.className='char-count'+(n>2700?' warn':'')+(n>=3000?' over':'');
+  if(previewing)document.getElementById('pv-body').textContent=e.target.value||'Your content will appear here…';
+});
+document.getElementById('cat-input').addEventListener('change',e=>{
+  if(previewing)document.getElementById('pv-cat').textContent=e.target.value||'General';
+});
+
+window.togglePreview=()=>{
+  previewing=!previewing;
+  const pc=document.getElementById('preview-card');
+  const pt=document.getElementById('preview-toggle');
+  if(previewing){
+    pc.classList.add('open');pt.textContent='✏️ Edit';
+    document.getElementById('pv-title').textContent=document.getElementById('title-input').value||'Your title will appear here';
+    document.getElementById('pv-body').textContent=document.getElementById('content-input').value||'Your content will appear here…';
+    document.getElementById('pv-cat').textContent=document.getElementById('cat-input').value||'General';
+  } else {
+    pc.classList.remove('open');pt.textContent='👁 Preview';
+  }
+};
+
+window.publishPost=async()=>{
+  const title=document.getElementById('title-input').value.trim();
+  const content=document.getElementById('content-input').value.trim();
+  const category=document.getElementById('cat-input').value;
+
+  if(!category){alert('Please choose a category.');return;}
+  if(!title||title.length<10){alert('Title must be at least 10 characters.');return;}
+  if(!content||content.length<100){alert('Content must be at least 100 characters. Write something genuinely useful!');return;}
+
+  const btn=document.getElementById('publish-btn');
+  btn.disabled=true;btn.textContent='Publishing…';
+
+  try{
+    const name=userData.fullName||currentUser.displayName||currentUser.email.split('@')[0];
+    await addDoc(collection(db,'posts'),{
+      authorId:currentUser.uid,
+      authorName:name,
+      title,
+      content,
+      category,
+      likes:[],
+      likeCount:0,
+      commentCount:0,
+      views:0,
+      createdAt:serverTimestamp()
+    });
+
+    // Increment user's post count
+    await updateDoc(doc(db,'users',currentUser.uid),{postCount:increment(1)});
+
+    document.getElementById('write-form').style.display='none';
+    document.getElementById('success-screen').classList.add('open');
+  }catch(err){
+    btn.disabled=false;btn.textContent='Publish Post →';
+    alert('Error publishing: '+err.message);
+  }
+};
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='index.html';return;}
+  currentUser=user;
+  const snap=await getDoc(doc(db,'users',user.uid));
+  userData=snap.exists()?snap.data():{};
+  const name=userData.fullName||user.displayName||user.email.split('@')[0];
+  document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('nav-name').textContent=name;
+  document.getElementById('pv-av').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('pv-name').textContent=name;
+  document.getElementById('loading').style.display='none';
+  document.getElementById('page-wrap').style.display='block';
+});
+
+window.handleLogout=async()=>{await signOut(auth);window.location.href='index.html';};
+</script>
+</body>
+</html>
