@@ -17,36 +17,45 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
 .logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--text);}
 .logo em{font-style:italic;color:var(--accent);}
-nav ul{display:flex;gap:28px;list-style:none;align-items:center;}
-nav ul a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s;}
-nav ul a:hover{color:var(--text);}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
+.nav-links a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
 .nav-user{display:flex;align-items:center;gap:10px;}
-.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;}
 .nav-name{font-size:0.85rem;font-weight:600;color:var(--text);}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 22px;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
-.btn-fill{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(108,99,255,0.28);}
+.btn-fill{background:var(--accent);color:#fff;}
 .btn-fill:hover{transform:translateY(-1px);}
 .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
 .btn-ghost:hover{border-color:var(--accent);}
 .btn-sm{padding:7px 16px;font-size:0.8rem;border-radius:8px;}
-
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:800;background:rgba(9,9,14,0.97);backdrop-filter:blur(18px);border-top:1px solid var(--border);padding:8px 0 env(safe-area-inset-bottom,8px);}
+.mobile-nav-inner{display:flex;justify-content:space-around;}
+.mnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;color:var(--sub);font-size:0.6rem;font-weight:600;text-decoration:none;transition:color .2s;min-width:52px;}
+.mnav-item.active,.mnav-item:hover{color:var(--accent);}
+.mnav-item .mico{font-size:1.3rem;line-height:1;}
 .app-shell{padding-top:72px;}
 .page-wrap{max-width:700px;margin:0 auto;padding:56px 24px 100px;}
 .sec-label{font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block;}
 .page-header{margin-bottom:36px;}
 .page-header h1{font-size:clamp(1.8rem,3vw,2.4rem);color:var(--text);margin-bottom:6px;}
-.page-header p{font-size:0.9rem;}
 
-/* WRITE AREA */
+/* COOLDOWN BANNER */
+.cooldown-banner{background:rgba(232,184,75,0.06);border:1px solid rgba(232,184,75,0.25);border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:24px;}
+.cooldown-banner .cd-ico{font-size:2.5rem;margin-bottom:12px;display:block;}
+.cooldown-banner h3{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--text);margin-bottom:8px;}
+.cooldown-banner p{font-size:0.85rem;margin-bottom:16px;}
+.cd-timer{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;color:var(--gold);margin-bottom:4px;}
+.cd-sub{font-size:0.75rem;color:var(--sub);}
+
+.earn-note{background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.18);border-radius:10px;padding:16px 20px;margin-bottom:24px;font-size:0.83rem;}
+.earn-note strong{color:var(--accent);display:block;margin-bottom:4px;}
+.earn-note p{margin:0;font-size:0.82rem;}
 .write-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin-bottom:20px;}
-
-/* CHAR COUNTER */
 .field-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
 .field-label{font-size:0.72rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--sub);}
 .char-count{font-size:0.72rem;color:var(--faint);}
-.char-count.warn{color:var(--gold);}
-.char-count.over{color:var(--rose);}
-
+.char-count.warn{color:var(--gold);}.char-count.over{color:var(--rose);}
 .fg{margin-bottom:20px;}
 .fg input,.fg select,.fg textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:0.92rem;outline:none;transition:border-color .2s;}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
@@ -54,12 +63,8 @@ nav ul a:hover{color:var(--text);}
 .fg textarea{resize:vertical;min-height:280px;line-height:1.7;}
 .fg select{cursor:pointer;}
 .fg .hint{font-size:0.73rem;color:var(--sub);margin-top:6px;}
-
-/* TITLE INPUT SPECIAL */
 #title-input{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--text);background:transparent;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:10px 0;transition:border-color .2s;}
 #title-input:focus{border-color:var(--accent);background:transparent;}
-
-/* PREVIEW */
 .preview-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;display:none;}
 .preview-card.open{display:block;}
 .preview-label{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
@@ -70,46 +75,34 @@ nav ul a:hover{color:var(--text);}
 .preview-author{display:flex;align-items:center;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .preview-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:#fff;}
 .preview-name{font-size:0.82rem;font-weight:600;color:var(--text);}
-
-/* GUIDELINES */
 .guide-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:20px;}
 .guide-card h4{font-family:'Instrument Sans',sans-serif;font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:12px;}
 .guide-list{list-style:none;display:flex;flex-direction:column;gap:7px;}
 .guide-list li{font-size:0.8rem;color:var(--sub);padding-left:16px;position:relative;}
 .guide-list li::before{content:'✓';color:var(--green);position:absolute;left:0;font-size:0.75rem;}
-
-/* EARN NOTE */
-.earn-note{background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.18);border-radius:10px;padding:16px 20px;margin-bottom:24px;font-size:0.83rem;}
-.earn-note strong{color:var(--accent);display:block;margin-bottom:4px;}
-.earn-note p{margin:0;font-size:0.82rem;}
-
-/* PUBLISH ROW */
 .publish-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .publish-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.92rem;cursor:pointer;transition:all .2s;box-shadow:0 6px 24px rgba(108,99,255,0.28);}
-.publish-btn:hover{transform:translateY(-1px);box-shadow:0 10px 32px rgba(108,99,255,0.38);}
+.publish-btn:hover{transform:translateY(-1px);}
 .publish-btn:disabled{background:var(--faint);color:var(--sub);cursor:not-allowed;transform:none;box-shadow:none;}
 .preview-toggle{background:transparent;border:1px solid var(--border);border-radius:10px;padding:12px 22px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:0.88rem;cursor:pointer;color:var(--text);transition:all .2s;}
 .preview-toggle:hover{border-color:var(--accent);}
-
-/* SUCCESS */
 .success-screen{display:none;text-align:center;padding:60px 0;}
 .success-screen.open{display:block;}
 .success-icon{font-size:4rem;display:block;margin-bottom:16px;}
 .success-screen h2{font-size:1.8rem;color:var(--text);margin-bottom:10px;}
 .success-screen p{font-size:0.9rem;margin-bottom:28px;}
 .success-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-
 #loading{display:flex;align-items:center;justify-content:center;min-height:60vh;color:var(--sub);font-size:0.9rem;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 @media(max-width:960px){nav{padding:14px 24px;}.page-wrap{padding:48px 16px 80px;}}
-@media(max-width:600px){nav ul{display:none;}.publish-row{flex-direction:column;align-items:stretch;}.publish-row button{width:100%;}}
+@media(max-width:600px){.nav-links{display:none;}.nav-name{display:none;}.mobile-nav{display:block;}.page-wrap{padding:40px 16px 90px;}.publish-row{flex-direction:column;}.publish-row button,.publish-row a{width:100%;justify-content:center;}}
 </style>
 </head>
 <body>
 <nav>
   <a href="dashboard.html" class="logo">Create<em>&</em>Earn</a>
-  <ul>
+  <ul class="nav-links">
     <li><a href="dashboard.html">Dashboard</a></li>
     <li><a href="feed.html">Feed</a></li>
     <li><a href="tasks.html">Tasks</a></li>
@@ -122,11 +115,28 @@ nav ul a:hover{color:var(--text);}
     <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
   </div>
 </nav>
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a href="dashboard.html" class="mnav-item"><span class="mico">🏠</span>Home</a>
+    <a href="feed.html" class="mnav-item active"><span class="mico">📰</span>Feed</a>
+    <a href="tasks.html" class="mnav-item"><span class="mico">🎯</span>Tasks</a>
+    <a href="withdraw.html" class="mnav-item"><span class="mico">💸</span>Withdraw</a>
+    <a href="profile.html" class="mnav-item"><span class="mico">👤</span>Profile</a>
+  </div>
+</nav>
 
 <div class="app-shell">
   <div id="loading"><div class="spinner"></div>Loading…</div>
-
   <div class="page-wrap" id="page-wrap" style="display:none;">
+
+    <!-- COOLDOWN BANNER (shown when on cooldown) -->
+    <div class="cooldown-banner" id="cooldown-banner" style="display:none;">
+      <span class="cd-ico">⏳</span>
+      <h3>You can publish your next post in</h3>
+      <div class="cd-timer" id="cd-timer">6:00:00</div>
+      <div class="cd-sub">One post allowed every 6 hours. This keeps quality high and revenue per post higher for everyone.</div>
+      <a href="feed.html" class="btn btn-fill" style="margin-top:16px;">Browse Feed Instead →</a>
+    </div>
 
     <!-- WRITE FORM -->
     <div id="write-form">
@@ -135,14 +145,11 @@ nav ul a:hover{color:var(--text);}
         <h1>Write a Post</h1>
         <p>Share your knowledge. Every view earns you a share of ad revenue.</p>
       </div>
-
       <div class="earn-note">
         <strong>💰 How You Earn</strong>
-        <p>Creators earn 30–40% of net ad revenue generated by their posts. The more views your post gets, the more you earn. Revenue is credited in real time to your Creator Balance.</p>
+        <p>Creators earn 30–40% of net ad revenue from their posts. More views = more earnings. Revenue is credited in real time to your Creator Balance. You can publish one post every 6 hours.</p>
       </div>
-
       <div class="write-card">
-        <!-- CATEGORY -->
         <div class="fg">
           <div class="field-head"><span class="field-label">Category</span></div>
           <select id="cat-input">
@@ -156,29 +163,17 @@ nav ul a:hover{color:var(--text);}
             <option value="General">General</option>
           </select>
         </div>
-
-        <!-- TITLE -->
         <div class="fg">
-          <div class="field-head">
-            <span class="field-label">Title</span>
-            <span class="char-count" id="title-count">0 / 100</span>
-          </div>
+          <div class="field-head"><span class="field-label">Title</span><span class="char-count" id="title-count">0 / 100</span></div>
           <input type="text" id="title-input" placeholder="Write a clear, compelling title…" maxlength="100"/>
-          <div class="hint">A good title is specific and makes someone want to read. Aim for 40–80 characters.</div>
+          <div class="hint">Aim for 40–80 characters. Specific titles get more clicks.</div>
         </div>
-
-        <!-- CONTENT -->
         <div class="fg" style="margin-bottom:0;">
-          <div class="field-head">
-            <span class="field-label">Content</span>
-            <span class="char-count" id="content-count">0 / 3000</span>
-          </div>
-          <textarea id="content-input" placeholder="Write your post here. Share something genuinely useful, interesting, or entertaining. Posts with real value get more views and earn more.&#10;&#10;Minimum 100 characters. Maximum 3000." maxlength="3000"></textarea>
-          <div class="hint">Minimum 100 characters. No plagiarism. No copy-paste from other sites. Write in your own words.</div>
+          <div class="field-head"><span class="field-label">Content</span><span class="char-count" id="content-count">0 / 3000</span></div>
+          <textarea id="content-input" placeholder="Write your post here. Share something genuinely useful, interesting, or entertaining.&#10;&#10;Minimum 100 characters. Maximum 3000." maxlength="3000"></textarea>
+          <div class="hint">Min 100 characters. Write in your own words — no plagiarism or copy-paste from other sites.</div>
         </div>
       </div>
-
-      <!-- PREVIEW -->
       <div class="preview-card" id="preview-card">
         <div class="preview-label">Preview</div>
         <span class="preview-cat" id="pv-cat">General</span>
@@ -190,20 +185,17 @@ nav ul a:hover{color:var(--text);}
           <span style="font-size:0.72rem;color:var(--sub);margin-left:6px;">· just now</span>
         </div>
       </div>
-
-      <!-- GUIDELINES -->
       <div class="guide-card">
         <h4>📋 Content Guidelines</h4>
         <ul class="guide-list">
           <li>Write in your own words — no copy-pasting from other websites</li>
           <li>Minimum 100 characters of original content</li>
+          <li>One post allowed every 6 hours per account</li>
           <li>No spam, repeated content, or bulk AI-generated posts</li>
           <li>No hate speech, explicit content, or harassment</li>
-          <li>Posts that violate guidelines are removed and earnings withheld</li>
-          <li>High-quality posts get promoted in the feed and earn more</li>
+          <li>Posts violating guidelines are removed and earnings withheld</li>
         </ul>
       </div>
-
       <div class="publish-row">
         <button class="publish-btn" id="publish-btn" onclick="publishPost()">Publish Post →</button>
         <button class="preview-toggle" id="preview-toggle" onclick="togglePreview()">👁 Preview</button>
@@ -211,17 +203,16 @@ nav ul a:hover{color:var(--text);}
       </div>
     </div>
 
-    <!-- SUCCESS SCREEN -->
+    <!-- SUCCESS -->
     <div class="success-screen" id="success-screen">
       <span class="success-icon">🎉</span>
       <h2>Post Published!</h2>
-      <p>Your post is now live on the feed. Every view earns you ad revenue credited to your Creator Balance.</p>
+      <p>Your post is now live. Every view earns ad revenue credited to your Creator Balance. Your next post is available in 6 hours.</p>
       <div class="success-btns">
         <a href="feed.html" class="btn btn-fill">View in Feed →</a>
-        <a href="create-post.html" class="btn btn-ghost">Write Another Post</a>
+        <a href="dashboard.html" class="btn btn-ghost">Back to Dashboard</a>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -234,49 +225,72 @@ const firebaseConfig={apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",authDomai
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
-let currentUser=null, userData=null, previewing=false;
+let currentUser=null,userData=null,previewing=false;
+const SIX_HOURS=6*60*60*1000;
 
 // Char counters
 document.getElementById('title-input').addEventListener('input',e=>{
-  const n=e.target.value.length;
-  const el=document.getElementById('title-count');
-  el.textContent=`${n} / 100`;
-  el.className='char-count'+(n>80?' warn':'')+(n>=100?' over':'');
+  const n=e.target.value.length;const el=document.getElementById('title-count');
+  el.textContent=`${n} / 100`;el.className='char-count'+(n>80?' warn':'')+(n>=100?' over':'');
   if(previewing)document.getElementById('pv-title').textContent=e.target.value||'Your title will appear here';
 });
 document.getElementById('content-input').addEventListener('input',e=>{
-  const n=e.target.value.length;
-  const el=document.getElementById('content-count');
-  el.textContent=`${n} / 3000`;
-  el.className='char-count'+(n>2700?' warn':'')+(n>=3000?' over':'');
+  const n=e.target.value.length;const el=document.getElementById('content-count');
+  el.textContent=`${n} / 3000`;el.className='char-count'+(n>2700?' warn':'')+(n>=3000?' over':'');
   if(previewing)document.getElementById('pv-body').textContent=e.target.value||'Your content will appear here…';
 });
 document.getElementById('cat-input').addEventListener('change',e=>{
   if(previewing)document.getElementById('pv-cat').textContent=e.target.value||'General';
 });
 
+// Cooldown countdown
+let cdInterval=null;
+function startCooldownTimer(lastPostTime){
+  const update=()=>{
+    const elapsed=Date.now()-lastPostTime;
+    const remaining=SIX_HOURS-elapsed;
+    if(remaining<=0){clearInterval(cdInterval);location.reload();return;}
+    const h=Math.floor(remaining/3600000);
+    const m=Math.floor((remaining%3600000)/60000);
+    const s=Math.floor((remaining%60000)/1000);
+    const el=document.getElementById('cd-timer');
+    if(el)el.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  };
+  update();cdInterval=setInterval(update,1000);
+}
+
 window.togglePreview=()=>{
   previewing=!previewing;
-  const pc=document.getElementById('preview-card');
-  const pt=document.getElementById('preview-toggle');
+  const pc=document.getElementById('preview-card'),pt=document.getElementById('preview-toggle');
   if(previewing){
     pc.classList.add('open');pt.textContent='✏️ Edit';
     document.getElementById('pv-title').textContent=document.getElementById('title-input').value||'Your title will appear here';
     document.getElementById('pv-body').textContent=document.getElementById('content-input').value||'Your content will appear here…';
     document.getElementById('pv-cat').textContent=document.getElementById('cat-input').value||'General';
-  } else {
-    pc.classList.remove('open');pt.textContent='👁 Preview';
-  }
+  }else{pc.classList.remove('open');pt.textContent='👁 Preview';}
 };
 
 window.publishPost=async()=>{
   const title=document.getElementById('title-input').value.trim();
   const content=document.getElementById('content-input').value.trim();
   const category=document.getElementById('cat-input').value;
-
   if(!category){alert('Please choose a category.');return;}
   if(!title||title.length<10){alert('Title must be at least 10 characters.');return;}
   if(!content||content.length<100){alert('Content must be at least 100 characters. Write something genuinely useful!');return;}
+
+  // Double-check cooldown on publish (prevent bypass)
+  const snap=await getDoc(doc(db,'users',currentUser.uid));
+  const freshData=snap.data()||{};
+  const lastPostAt=freshData.lastPostAt;
+  if(lastPostAt){
+    const lastTime=lastPostAt.toMillis?lastPostAt.toMillis():new Date(lastPostAt).getTime();
+    if(Date.now()-lastTime<SIX_HOURS){
+      const remaining=SIX_HOURS-(Date.now()-lastTime);
+      const h=Math.floor(remaining/3600000),m=Math.floor((remaining%3600000)/60000);
+      alert(`You can publish again in ${h}h ${m}m. One post every 6 hours.`);
+      return;
+    }
+  }
 
   const btn=document.getElementById('publish-btn');
   btn.disabled=true;btn.textContent='Publishing…';
@@ -286,19 +300,14 @@ window.publishPost=async()=>{
     await addDoc(collection(db,'posts'),{
       authorId:currentUser.uid,
       authorName:name,
-      title,
-      content,
-      category,
-      likes:[],
-      likeCount:0,
-      commentCount:0,
-      views:0,
+      title,content,category,
+      likes:[],likeCount:0,commentCount:0,views:0,
       createdAt:serverTimestamp()
     });
-
-    // Increment user's post count
-    await updateDoc(doc(db,'users',currentUser.uid),{postCount:increment(1)});
-
+    await updateDoc(doc(db,'users',currentUser.uid),{
+      postCount:increment(1),
+      lastPostAt:serverTimestamp()
+    });
     document.getElementById('write-form').style.display='none';
     document.getElementById('success-screen').classList.add('open');
   }catch(err){
@@ -307,21 +316,46 @@ window.publishPost=async()=>{
   }
 };
 
+const authTimeout=setTimeout(()=>{window.location.href='index.html';},8000);
+
 onAuthStateChanged(auth,async user=>{
+  clearTimeout(authTimeout);
   if(!user){window.location.href='index.html';return;}
   currentUser=user;
-  const snap=await getDoc(doc(db,'users',user.uid));
-  userData=snap.exists()?snap.data():{};
-  const name=userData.fullName||user.displayName||user.email.split('@')[0];
-  document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
-  document.getElementById('nav-name').textContent=name;
-  document.getElementById('pv-av').textContent=name.charAt(0).toUpperCase();
-  document.getElementById('pv-name').textContent=name;
-  document.getElementById('loading').style.display='none';
-  document.getElementById('page-wrap').style.display='block';
+
+  try{
+    const snap=await getDoc(doc(db,'users',user.uid));
+    userData=snap.exists()?snap.data():{};
+    const name=userData.fullName||user.displayName||user.email.split('@')[0];
+    document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
+    document.getElementById('nav-name').textContent=name;
+    document.getElementById('pv-av').textContent=name.charAt(0).toUpperCase();
+    document.getElementById('pv-name').textContent=name;
+
+    // Check 6-hour cooldown
+    const lastPostAt=userData.lastPostAt;
+    if(lastPostAt){
+      const lastTime=lastPostAt.toMillis?lastPostAt.toMillis():new Date(lastPostAt).getTime();
+      if(Date.now()-lastTime<SIX_HOURS){
+        document.getElementById('write-form').style.display='none';
+        document.getElementById('cooldown-banner').style.display='block';
+        startCooldownTimer(lastTime);
+        document.getElementById('loading').style.display='none';
+        document.getElementById('page-wrap').style.display='block';
+        return;
+      }
+    }
+
+    document.getElementById('loading').style.display='none';
+    document.getElementById('page-wrap').style.display='block';
+  }catch(err){
+    console.error(err);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('page-wrap').style.display='block';
+  }
 });
 
-window.handleLogout=async()=>{await signOut(auth);window.location.href='index.html';};
+window.handleLogout=async()=>{try{await signOut(auth);}finally{window.location.href='index.html';}};
 </script>
 </body>
 </html>
