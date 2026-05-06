@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /about.html
+Allow: /terms.html
+Allow: /privacy.html
+
+Disallow: /dashboard.html
+Disallow: /tasks.html
+Disallow: /feed.html
+Disallow: /withdraw.html
+Disallow: /profile.html
+Disallow: /create-post.html
+
+Sitemap: https://createandearn.site/sitemap.xml
