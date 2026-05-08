@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Refer & Earn — CreateAndEarn</title>
+<meta name="robots" content="noindex, nofollow"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<style>
+:root{--bg:#09090e;--surface:#111118;--card:#17171f;--border:#252532;--accent:#6c63ff;--green:#00c896;--rose:#f05d7a;--gold:#e8b84b;--text:#ededf5;--sub:#9090a8;--faint:#3a3a50;--radius:14px;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;min-height:100vh;}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;line-height:1.2;letter-spacing:-0.3px;}
+p{color:var(--sub);}strong{color:var(--text);font-weight:600;}a{text-decoration:none;color:var(--accent);}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--text);}
+.logo em{font-style:italic;color:var(--accent);}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
+.nav-links a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}
+.nav-name{font-size:0.85rem;font-weight:600;color:var(--text);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 22px;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
+.btn-fill{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(108,99,255,0.28);}
+.btn-fill:hover{transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent);}
+.btn-sm{padding:7px 16px;font-size:0.8rem;border-radius:8px;}
+
+/* MOBILE NAV */
+.mobile-nav{display:none;position:fixed;top:auto;bottom:0;left:0;right:0;z-index:9999;background:rgba(9,9,14,0.98);backdrop-filter:blur(18px);border-top:1px solid var(--border);padding:8px 0 env(safe-area-inset-bottom,8px);}
+.mobile-nav-inner{display:flex;justify-content:space-around;}
+.mnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 8px;color:var(--sub);font-size:0.55rem;font-weight:600;text-decoration:none;transition:color .2s;min-width:46px;}
+.mnav-item.active,.mnav-item:hover{color:var(--accent);}
+.mnav-item .mico{font-size:1.2rem;line-height:1;}
+
+/* LAYOUT */
+.app-shell{padding-top:72px;}
+.app-body{max-width:860px;margin:0 auto;padding:56px 48px 100px;}
+.sec-label{font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block;}
+
+/* HERO BANNER */
+.ref-hero{
+  background:linear-gradient(135deg,rgba(108,99,255,0.1) 0%,rgba(0,200,150,0.05) 100%);
+  border:1px solid rgba(108,99,255,0.2);
+  border-radius:20px;padding:40px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:32px;margin-bottom:28px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.ref-hero::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(108,99,255,0.15),transparent 70%);
+  pointer-events:none;
+}
+.hero-left h1{font-size:clamp(1.6rem,3vw,2.2rem);color:var(--text);margin-bottom:8px;}
+.hero-left h1 em{font-style:italic;color:var(--accent);}
+.hero-left p{font-size:0.88rem;max-width:420px;}
+.hero-pts{text-align:center;flex-shrink:0;}
+.hero-pts .big{font-family:'Fraunces',serif;font-size:3.5rem;font-weight:700;color:var(--gold);line-height:1;}
+.hero-pts .lbl{font-size:0.75rem;color:var(--sub);margin-top:4px;}
+.hero-pts .per{font-size:0.82rem;color:var(--gold);margin-top:2px;font-weight:600;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;transition:border-color .2s;}
+.stat-card:hover{border-color:var(--faint);}
+.s-ico{font-size:1.2rem;margin-bottom:10px;display:block;}
+.s-val{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px;}
+.s-val.green{color:var(--green);}.s-val.gold{color:var(--gold);}.s-val.accent{color:var(--accent);}
+.s-lbl{font-size:0.75rem;color:var(--sub);}
+
+/* REFERRAL LINK CARD */
+.link-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;}
+.link-card h3{font-family:'Instrument Sans',sans-serif;font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:6px;}
+.link-card>p{font-size:0.82rem;margin-bottom:20px;}
+.link-box{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.link-input{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:12px 16px;
+  color:var(--accent);font-family:'Instrument Sans',sans-serif;
+  font-size:0.85rem;font-weight:600;outline:none;
+  cursor:text;min-width:0;
+  transition:border-color .2s;
+}
+.link-input:focus{border-color:var(--accent);}
+.copy-btn{
+  background:var(--accent);color:#fff;border:none;
+  border-radius:10px;padding:12px 20px;
+  font-family:'Instrument Sans',sans-serif;font-weight:700;
+  font-size:0.85rem;cursor:pointer;transition:all .2s;
+  white-space:nowrap;flex-shrink:0;
+}
+.copy-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,99,255,0.35);}
+.copy-btn.copied{background:var(--green);color:#000;}
+
+/* SHARE BUTTONS */
+.share-section{margin-top:20px;}
+.share-label{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:12px;display:block;}
+.share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.share-btn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;
+  cursor:pointer;transition:all .2s;text-decoration:none;
+  font-family:'Instrument Sans',sans-serif;
+}
+.share-btn:hover{transform:translateY(-2px);}
+.share-btn .s-ico-big{font-size:1.5rem;}
+.share-btn .s-name{font-size:0.72rem;font-weight:600;color:var(--sub);}
+.share-wa{border-color:rgba(37,211,102,0.2);}.share-wa:hover{background:rgba(37,211,102,0.06);border-color:rgba(37,211,102,0.4);}.share-wa .s-name{color:#25d366;}
+.share-tw{border-color:rgba(29,161,242,0.2);}.share-tw:hover{background:rgba(29,161,242,0.06);border-color:rgba(29,161,242,0.4);}.share-tw .s-name{color:#1da1f2;}
+.share-fb{border-color:rgba(24,119,242,0.2);}.share-fb:hover{background:rgba(24,119,242,0.06);border-color:rgba(24,119,242,0.4);}.share-fb .s-name{color:#1877f2;}
+.share-tg{border-color:rgba(0,136,204,0.2);}.share-tg:hover{background:rgba(0,136,204,0.06);border-color:rgba(0,136,204,0.4);}.share-tg .s-name{color:#0088cc;}
+
+/* HOW IT WORKS */
+.how-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;}
+.how-card h3{font-family:'Instrument Sans',sans-serif;font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:20px;}
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(37,37,50,0.5);}
+.step:last-child{border-bottom:none;padding-bottom:0;}
+.step-num{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:0.9rem;font-weight:700;color:var(--accent);
+  flex-shrink:0;margin-top:2px;
+}
+.step-body strong{display:block;font-size:0.88rem;margin-bottom:3px;}
+.step-body p{font-size:0.8rem;max-width:100%;margin:0;}
+
+/* TIER TABLE */
+.tier-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;}
+.tier-card h3{font-family:'Instrument Sans',sans-serif;font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:20px;}
+.tier-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-radius:10px;margin-bottom:10px;
+  border:1px solid var(--border);transition:border-color .2s;
+}
+.tier-row:last-child{margin-bottom:0;}
+.tier-row.active-tier{border-color:rgba(108,99,255,0.35);background:rgba(108,99,255,0.05);}
+.tier-row.locked{opacity:0.45;}
+.tier-left{display:flex;align-items:center;gap:12px;}
+.tier-badge{
+  font-size:0.68rem;font-weight:700;padding:3px 10px;border-radius:5px;
+  letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;
+}
+.t1{background:rgba(108,99,255,0.1);color:var(--accent);}
+.t2{background:rgba(0,200,150,0.1);color:var(--green);}
+.t3{background:rgba(232,184,75,0.1);color:var(--gold);}
+.t4{background:rgba(240,93,122,0.1);color:var(--rose);}
+.tier-name{font-size:0.85rem;font-weight:600;color:var(--text);}
+.tier-range{font-size:0.75rem;color:var(--sub);}
+.tier-pts{text-align:right;}
+.tier-pts .tp-val{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--gold);}
+.tier-pts .tp-lbl{font-size:0.7rem;color:var(--sub);}
+.current-badge{font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(108,99,255,0.15);color:var(--accent);margin-left:8px;}
+
+/* PROGRESS TO NEXT TIER */
+.tier-progress{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:20px;}
+.tp-head{display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:10px;}
+.tp-head span{color:var(--sub);}
+.tp-head strong{color:var(--text);}
+.prog-track{height:6px;background:var(--border);border-radius:100px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .8s ease;}
+
+/* REFERRAL HISTORY */
+.history-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;}
+.history-card h3{font-family:'Instrument Sans',sans-serif;font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:18px;}
+.ref-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(37,37,50,0.5);}
+.ref-item:last-child{border-bottom:none;}
+.ref-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;color:#fff;flex-shrink:0;}
+.ref-info{flex:1;}
+.ref-info strong{display:block;font-size:0.85rem;color:var(--text);}
+.ref-info span{font-size:0.72rem;color:var(--sub);}
+.ref-pts{font-family:'Fraunces',serif;font-weight:700;color:var(--gold);font-size:0.95rem;}
+.ref-status{font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:4px;}
+.status-done{background:rgba(0,200,150,0.1);color:var(--green);}
+.status-pending{background:rgba(232,184,75,0.1);color:var(--gold);}
+.empty-state{text-align:center;padding:36px 0;color:var(--sub);}
+.empty-state .ei{font-size:2.5rem;display:block;margin-bottom:12px;opacity:0.35;}
+.empty-state h4{font-size:1rem;color:var(--text);margin-bottom:6px;}
+.empty-state p{font-size:0.82rem;}
+
+/* RULES BOX */
+.rules-box{background:rgba(108,99,255,0.04);border:1px solid rgba(108,99,255,0.15);border-radius:10px;padding:18px 20px;margin-bottom:20px;font-size:0.82rem;color:var(--sub);}
+.rules-box strong{color:var(--accent);display:block;margin-bottom:8px;}
+.rules-box ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.rules-box ul li{padding-left:16px;position:relative;}
+.rules-box ul li::before{content:'→';color:var(--accent);position:absolute;left:0;font-size:0.8rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid rgba(0,200,150,0.3);border-radius:10px;padding:12px 20px;font-size:0.83rem;color:var(--green);box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:1000;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* LOADING */
+#loading{display:flex;align-items:center;justify-content:center;min-height:60vh;color:var(--sub);font-size:0.9rem;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:960px){nav{padding:14px 24px;}.app-body{padding:48px 24px 100px;}.stats-row{grid-template-columns:1fr 1fr;}.share-grid{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:600px){.nav-links{display:none;}.nav-name{display:none;}.mobile-nav{display:block;}.app-body{padding:36px 16px 110px;}.stats-row{grid-template-columns:1fr 1fr;}.share-grid{grid-template-columns:repeat(4,1fr);}.ref-hero{flex-direction:column;text-align:center;}.link-box{flex-direction:column;}.link-input,.copy-btn{width:100%;}.tier-row{flex-direction:column;gap:8px;align-items:flex-start;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="dashboard.html" class="logo">Create<em>&</em>Earn</a>
+  <ul class="nav-links">
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="feed.html">Feed</a></li>
+    <li><a href="tasks.html">Tasks</a></li>
+    <li><a href="referral.html" class="active">Refer</a></li>
+    <li><a href="withdraw.html">Withdraw</a></li>
+    <li><a href="profile.html">Profile</a></li>
+  </ul>
+  <div class="nav-user">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <span class="nav-name" id="nav-name">…</span>
+    <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div class="app-shell">
+  <div id="loading"><div class="spinner"></div>Loading…</div>
+
+  <div class="app-body" id="app-body" style="display:none;">
+
+    <!-- HERO -->
+    <div class="ref-hero">
+      <div class="hero-left">
+        <span class="sec-label">Referral Program</span>
+        <h1>Invite Friends,<br/><em>Earn More Points</em></h1>
+        <p>Share your unique link. Every friend who signs up and completes their first task earns you bonus points — instantly credited to your account.</p>
+      </div>
+      <div class="hero-pts">
+        <div class="big" id="hero-pts-display">+50</div>
+        <div class="lbl">points per referral</div>
+        <div class="per" id="hero-tier-name">Starter tier</div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="s-ico">👥</span>
+        <div class="s-val accent" id="stat-total">0</div>
+        <div class="s-lbl">Total Referrals</div>
+      </div>
+      <div class="stat-card">
+        <span class="s-ico">✅</span>
+        <div class="s-val green" id="stat-active">0</div>
+        <div class="s-lbl">Active (Completed Task)</div>
+      </div>
+      <div class="stat-card">
+        <span class="s-ico">🪙</span>
+        <div class="s-val gold" id="stat-pts">0</div>
+        <div class="s-lbl">Points Earned</div>
+      </div>
+      <div class="stat-card">
+        <span class="s-ico">⏳</span>
+        <div class="s-val" id="stat-pending">0</div>
+        <div class="s-lbl">Pending</div>
+      </div>
+    </div>
+
+    <!-- TIER PROGRESS BAR -->
+    <div class="tier-progress">
+      <div class="tp-head">
+        <span id="tier-prog-label">0 referrals toward next tier</span>
+        <strong id="tier-prog-next">Next tier at 10 referrals</strong>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="tier-prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- REFERRAL LINK -->
+    <div class="link-card">
+      <h3>🔗 Your Unique Referral Link</h3>
+      <p>Share this link anywhere. When someone signs up through it and completes their first Login Task, you instantly earn points.</p>
+      <div class="link-box">
+        <input class="link-input" id="ref-link" readonly value="Loading…"/>
+        <button class="copy-btn" id="copy-btn" onclick="copyLink()">📋 Copy Link</button>
+      </div>
+
+      <!-- SHARE BUTTONS -->
+      <div class="share-section">
+        <span class="share-label">Share directly on</span>
+        <div class="share-grid">
+          <a class="share-btn share-wa" id="share-wa" href="#" target="_blank">
+            <span class="s-ico-big">💬</span>
+            <span class="s-name">WhatsApp</span>
+          </a>
+          <a class="share-btn share-tw" id="share-tw" href="#" target="_blank">
+            <span class="s-ico-big">🐦</span>
+            <span class="s-name">X / Twitter</span>
+          </a>
+          <a class="share-btn share-fb" id="share-fb" href="#" target="_blank">
+            <span class="s-ico-big">📘</span>
+            <span class="s-name">Facebook</span>
+          </a>
+          <a class="share-btn share-tg" id="share-tg" href="#" target="_blank">
+            <span class="s-ico-big">✈️</span>
+            <span class="s-name">Telegram</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="how-card">
+      <h3>⚡ How It Works</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Copy your unique referral link</strong>
+            <p>Every user gets a unique link tied to their account. Share it anywhere — WhatsApp, social media, friends, family, anywhere.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Friend signs up through your link</strong>
+            <p>When they click your link and create a free account, they are linked to you automatically. No extra steps needed.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>They complete their first Login Task</strong>
+            <p>Once your referred friend claims their first daily login bonus on the Task Center, the referral is confirmed as active.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>You earn points instantly</strong>
+            <p>Referral points are credited to your account immediately — no waiting, no manual claiming. Points stack on top of your daily task earnings.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER TABLE -->
+    <div class="tier-card">
+      <h3>🏆 Reward Tiers — More Referrals = More Points Each</h3>
+      <div id="tier-list"></div>
+    </div>
+
+    <!-- RULES -->
+    <div class="rules-box">
+      <strong>📋 Referral Rules</strong>
+      <ul>
+        <li>Referral only counts when the invited user completes their first Login Task</li>
+        <li>One referral code per account — cannot be changed</li>
+        <li>Self-referrals are automatically detected and disqualified</li>
+        <li>Referral points are separate from daily task points — they never reset with your streak</li>
+        <li>Inviting fake accounts or bot accounts = permanent ban and forfeiture of all referral points</li>
+        <li>Your referral code works forever — links never expire</li>
+      </ul>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="history-card">
+      <h3>📋 Referral History</h3>
+      <div id="history-list">
+        <div class="empty-state">
+          <span class="ei">👥</span>
+          <h4>No referrals yet</h4>
+          <p>Share your link and start earning bonus points for every friend who joins.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a href="dashboard.html" class="mnav-item"><span class="mico">🏠</span>Home</a>
+    <a href="feed.html" class="mnav-item"><span class="mico">📰</span>Feed</a>
+    <a href="tasks.html" class="mnav-item"><span class="mico">🎯</span>Tasks</a>
+    <a href="referral.html" class="mnav-item active"><span class="mico">🎁</span>Refer</a>
+    <a href="profile.html" class="mnav-item"><span class="mico">👤</span>Profile</a>
+  </div>
+</nav>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, arrayUnion, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",authDomain:"createandearn-b7502.firebaseapp.com",projectId:"createandearn-b7502",storageBucket:"createandearn-b7502.firebasestorage.app",messagingSenderId:"311184359792",appId:"1:311184359792:web:3b15ad30849e5645390fb5"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+let currentUser=null, userData=null, refLink='';
+
+// TIERS
+const TIERS=[
+  {id:'t1',label:'Starter',badge:'t1',range:'1–9 referrals',min:0,max:9,pts:50},
+  {id:'t2',label:'Builder',badge:'t2',range:'10–24 referrals',min:10,max:24,pts:75},
+  {id:'t3',label:'Champion',badge:'t3',range:'25–49 referrals',min:25,max:49,pts:100},
+  {id:'t4',label:'Legend',badge:'t4',range:'50+ referrals',min:50,max:Infinity,pts:150},
+];
+
+function getTier(count){return TIERS.find(t=>count>=t.min&&count<=t.max)||TIERS[0];}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show';
+  setTimeout(()=>t.className='toast',2500);
+}
+
+function buildShareLinks(link){
+  const url=encodeURIComponent(link);
+  const txt=encodeURIComponent(`I'm earning real USDT on CreateAndEarn — zero investment! Join through my link and we both earn bonus points:`);
+  document.getElementById('share-wa').href=`https://wa.me/?text=${txt}%20${url}`;
+  document.getElementById('share-tw').href=`https://twitter.com/intent/tweet?text=${txt}&url=${url}`;
+  document.getElementById('share-fb').href=`https://www.facebook.com/sharer/sharer.php?u=${link}`;
+  document.getElementById('share-tg').href=`https://t.me/share/url?url=${url}&text=${txt}`;
+}
+
+function buildTierList(activeCount){
+  const currentTier=getTier(activeCount);
+  const list=document.getElementById('tier-list');
+  list.innerHTML='';
+  TIERS.forEach(tier=>{
+    const isCurrent=tier.id===currentTier.id;
+    const isLocked=activeCount<tier.min;
+    const div=document.createElement('div');
+    div.className=`tier-row${isCurrent?' active-tier':''}${isLocked?' locked':''}`;
+    div.innerHTML=`
+      <div class="tier-left">
+        <span class="tier-badge ${tier.badge}">${tier.label}</span>
+        <div>
+          <div class="tier-name">${tier.range}${isCurrent?'<span class="current-badge">CURRENT</span>':''}</div>
+          <div class="tier-range">${isLocked?'🔒 Locked':'✓ Unlocked'}</div>
+        </div>
+      </div>
+      <div class="tier-pts">
+        <div class="tp-val">+${tier.pts} pts</div>
+        <div class="tp-lbl">per referral</div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function buildTierProgress(activeCount){
+  const currentTier=getTier(activeCount);
+  const nextTier=TIERS[TIERS.indexOf(currentTier)+1];
+  if(!nextTier){
+    document.getElementById('tier-prog-label').textContent=`${activeCount} referrals — Maximum tier reached!`;
+    document.getElementById('tier-prog-next').textContent='Legend tier active 🏆';
+    document.getElementById('tier-prog-fill').style.width='100%';
+    return;
+  }
+  const progress=activeCount-currentTier.min;
+  const needed=nextTier.min-currentTier.min;
+  const pct=Math.round((progress/needed)*100);
+  document.getElementById('tier-prog-label').textContent=`${activeCount} referrals — ${progress} of ${needed} toward ${nextTier.label}`;
+  document.getElementById('tier-prog-next').textContent=`${nextTier.label} tier at ${nextTier.min} referrals (+${nextTier.pts} pts each)`;
+  document.getElementById('tier-prog-fill').style.width=`${pct}%`;
+}
+
+function buildHistory(referrals){
+  const list=document.getElementById('history-list');
+  if(!referrals||referrals.length===0){
+    list.innerHTML=`<div class="empty-state"><span class="ei">👥</span><h4>No referrals yet</h4><p>Share your link and start earning bonus points for every friend who joins.</p></div>`;
+    return;
+  }
+  list.innerHTML=[...referrals].reverse().map(r=>`
+    <div class="ref-item">
+      <div class="ref-av">${(r.name||'?').charAt(0).toUpperCase()}</div>
+      <div class="ref-info">
+        <strong>${r.name||'Anonymous'}</strong>
+        <span>Joined ${r.joinedAt||'—'}</span>
+      </div>
+      <span class="ref-status ${r.active?'status-done':'status-pending'}">${r.active?'Active':'Pending'}</span>
+      <div class="ref-pts">${r.active?`+${r.pts} pts`:'—'}</div>
+    </div>`).join('');
+}
+
+window.copyLink=async()=>{
+  if(!refLink)return;
+  try{
+    await navigator.clipboard.writeText(refLink);
+    const btn=document.getElementById('copy-btn');
+    btn.textContent='✓ Copied!';btn.classList.add('copied');
+    showToast('✅ Referral link copied!');
+    setTimeout(()=>{btn.textContent='📋 Copy Link';btn.classList.remove('copied');},2500);
+  }catch(e){
+    document.getElementById('ref-link').select();
+    showToast('Select the link and copy manually.');
+  }
+};
+
+const authTimeout=setTimeout(()=>{window.location.href='index.html';},8000);
+
+onAuthStateChanged(auth,async user=>{
+  clearTimeout(authTimeout);
+  if(!user){window.location.href='index.html';return;}
+  currentUser=user;
+
+  try{
+    const ref=doc(db,'users',user.uid);
+    let snap=await getDoc(ref);
+    userData=snap.exists()?snap.data():{};
+    const name=userData.fullName||user.displayName||user.email.split('@')[0];
+
+    document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
+    document.getElementById('nav-name').textContent=name;
+
+    // Generate referral code from UID (first 8 chars, uppercase)
+    const refCode=user.uid.slice(0,8).toUpperCase();
+
+    // Save referral code to Firestore if not already saved
+    if(!userData.referralCode){
+      await updateDoc(ref,{referralCode:refCode});
+      userData.referralCode=refCode;
+    }
+
+    refLink=`https://createandearn.site/?ref=${userData.referralCode||refCode}`;
+    document.getElementById('ref-link').value=refLink;
+    buildShareLinks(refLink);
+
+    // Stats
+    const referrals=userData.referrals||[];
+    const activeReferrals=referrals.filter(r=>r.active);
+    const pendingReferrals=referrals.filter(r=>!r.active);
+    const totalPts=userData.referralPoints||0;
+    const activeCount=activeReferrals.length;
+    const currentTier=getTier(activeCount);
+
+    document.getElementById('stat-total').textContent=referrals.length;
+    document.getElementById('stat-active').textContent=activeCount;
+    document.getElementById('stat-pts').textContent=totalPts.toLocaleString();
+    document.getElementById('stat-pending').textContent=pendingReferrals.length;
+    document.getElementById('hero-pts-display').textContent=`+${currentTier.pts}`;
+    document.getElementById('hero-tier-name').textContent=`${currentTier.label} tier`;
+
+    buildTierList(activeCount);
+    buildTierProgress(activeCount);
+    buildHistory(referrals);
+
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app-body').style.display='block';
+  }catch(err){
+    console.error(err);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app-body').style.display='block';
+  }
+});
+
+window.handleLogout=async()=>{try{await signOut(auth);}finally{window.location.href='index.html';}};
+</script>
+</body>
+</html>
