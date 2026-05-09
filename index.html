@@ -891,7 +891,7 @@ document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
   // Import the functions you need from the SDKs
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",
@@ -938,6 +938,41 @@ document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
         streak: 0,
         createdAt: new Date()
       });
+      // ── REFERRAL TRACKING ──
+try {
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  if(refCode){
+    const refQuery = query(
+      collection(db, 'users'),
+      where('referralCode', '==', refCode)
+    );
+    const refSnap = await getDocs(refQuery);
+    if(!refSnap.empty){
+      const referrerRef = refSnap.docs[0].ref;
+      const referrerId = refSnap.docs[0].id;
+      // Don't allow self-referral
+      if(referrerId !== user.uid){
+        // Add pending referral to referrer's doc
+        await updateDoc(referrerRef, {
+          referrals: arrayUnion({
+            uid: user.uid,
+            name: name,
+            joinedAt: new Date().toISOString().split('T')[0],
+            active: false,
+            pts: 0
+          })
+        });
+        // Save referredBy on new user's doc
+        await updateDoc(doc(db, 'users', user.uid), {
+          referredBy: referrerId
+        });
+      }
+    }
+  }
+} catch(refErr) {
+  console.log('Referral tracking error:', refErr);
+}
 
       alert("Account created successfully!");
       closeModal();
