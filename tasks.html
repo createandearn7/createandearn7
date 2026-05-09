@@ -317,6 +317,48 @@ async function claimLoginTask(taskId,pts,card){
       lastUpdated:serverTimestamp()
     };
     await updateDoc(ref,updates);
+    // ── CREDIT REFERRER if this is user's first ever task ──
+try {
+  const freshSnap = await getDoc(ref);
+  const freshData = freshSnap.data() || {};
+  
+  // Only runs if this is literally the first task ever claimed
+  const allTaskDays = freshData.taskDays || {};
+  const totalDaysWithTasks = Object.keys(allTaskDays).length;
+  
+  if(totalDaysWithTasks <= 1 && freshData.referredBy){
+    const referrerId = freshData.referredBy;
+    const referrerRef = doc(db, 'users', referrerId);
+    const referrerSnap = await getDoc(referrerRef);
+    
+    if(referrerSnap.exists()){
+      const referrerData = referrerSnap.data();
+      const referrals = referrerData.referrals || [];
+      const activeCount = referrals.filter(r => r.active).length;
+      
+      // Calculate points based on tier
+      let tierPts = 50;
+      if(activeCount >= 50) tierPts = 150;
+      else if(activeCount >= 25) tierPts = 100;
+      else if(activeCount >= 10) tierPts = 75;
+      
+      // Update referral to active
+      const updatedReferrals = referrals.map(r =>
+        r.uid === currentUser.uid
+          ? { ...r, active: true, pts: tierPts }
+          : r
+      );
+      
+      await updateDoc(referrerRef, {
+        referrals: updatedReferrals,
+        referralPoints: increment(tierPts),
+        totalPoints: increment(tierPts)
+      });
+    }
+  }
+} catch(refErr) {
+  console.log('Referrer credit error:', refErr);
+}
     userData={...data,totalPoints:newTotalPoints,streak,lastTaskDay:today,taskDays:{...taskDays,[today]:{...todayObj,completed:newCompleted,loginCount:1}}};
 
     // Update streak UI
