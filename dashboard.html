@@ -220,6 +220,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
     <!-- DIVIDER -->
     <div style="height:1px;background:#252532;margin:6px 0 16px;"></div>
 
+    <!-- CHECKBOX -->
+    <div onclick="toggleNeverShow()" style="display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;padding:4px 0;">
+      <input type="checkbox" id="never-show-check" style="width:16px;height:16px;accent-color:#6c63ff;cursor:pointer;flex-shrink:0;" onclick="event.stopPropagation()"/>
+      <label for="never-show-check" style="font-size:0.8rem;color:#9090a8;cursor:pointer;user-select:none;">Don't show this again</label>
     </div>
 
   </div>
