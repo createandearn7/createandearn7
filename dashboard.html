@@ -173,30 +173,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
 <body>
 <nav>
   <a href="dashboard.html" class="logo">Create<em>&</em>Earn</a>
-
-<!-- ── FOLLOW US POPUP ── -->
-<div class="popup-overlay" id="follow-popup">
-  <div class="popup-box">
-    <button class="popup-close" onclick="closePopup()">✕</button>
-    <div class="popup-icon">📣</div>
-    <div class="popup-tag">📢 Stay Connected</div>
-    <h2>Follow Us &amp; Never<br/><em>Miss an Update</em></h2>
-    <p class="popup-desc">Get notified about new features, payout announcements, streak tips, and platform milestones. Join our community now.</p>
-    <div class="popup-btns">
-      <a href="https://t.me/createandearn7" target="_blank" class="popup-btn pbtn-tg" onclick="followClicked('telegram')">
-        <span>✈️</span> Follow on Telegram
-      </a>
-      <a href="https://x.com/createandearn7" target="_blank" class="popup-btn pbtn-tw" onclick="followClicked('twitter')">
-        <span>𝕏</span> Follow on X (Twitter)
-      </a>
-    </div>
-    <div class="popup-divider"></div>
-    <div class="popup-check-row" onclick="toggleNeverShow()">
-      <input type="checkbox" id="never-show-check"/>
-      <label for="never-show-check">Don't show this again</label>
-    </div>
-  </div>
-</div>
   <ul class="nav-links">
     <li><a href="dashboard.html" class="active">Dashboard</a></li>
     <li><a href="feed.html">Feed</a></li>
@@ -209,6 +185,48 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
     <span class="nav-name" id="nav-name">…</span>
     <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
   </div>
+</nav>
+
+<!-- ── FOLLOW US POPUP ── -->
+<div id="follow-popup" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 32px 28px;max-width:420px;width:100%;position:relative;box-shadow:0 24px 80px rgba(0,0,0,0.6);text-align:center;">
+
+    <!-- CLOSE BUTTON -->
+    <button onclick="closePopup()" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--sub);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:10;font-family:sans-serif;line-height:1;" onmouseover="this.style.borderColor='#f05d7a';this.style.color='#f05d7a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--sub)'">✕</button>
+
+    <!-- ICON -->
+    <div style="width:68px;height:68px;border-radius:18px;background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(0,200,150,0.06));border:1px solid rgba(108,99,255,0.2);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">📣</div>
+
+    <!-- TAG -->
+    <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,200,150,0.06);border:1px solid rgba(0,200,150,0.15);border-radius:6px;padding:4px 12px;font-size:0.72rem;color:#00c896;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;">📢 Stay Connected</div>
+
+    <!-- TITLE -->
+    <h2 style="font-family:'Fraunces',serif;font-size:1.4rem;font-weight:700;color:#ededf5;margin-bottom:10px;line-height:1.3;">Follow Us &amp; Never<br/><em style="font-style:italic;color:#6c63ff;">Miss an Update</em></h2>
+
+    <!-- DESC -->
+    <p style="font-size:0.85rem;color:#9090a8;margin-bottom:24px;line-height:1.65;max-width:100%;">Get notified about new features, payout announcements, streak tips, and platform milestones. Join our community now.</p>
+
+    <!-- BUTTONS -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+      <a href="https://t.me/createandearn" target="_blank" onclick="followClicked('telegram')" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 20px;border-radius:10px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;background:linear-gradient(135deg,#0088cc,#005f8c);color:#fff;box-shadow:0 4px 16px rgba(0,136,204,0.25);">
+        <span>✈️</span> Follow on Telegram
+      </a>
+      <a href="https://twitter.com/createandearn" target="_blank" onclick="followClicked('twitter')" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 20px;border-radius:10px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;background:#000;color:#fff;border:1px solid #333;">
+        <span>𝕏</span> Follow on X (Twitter)
+      </a>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="height:1px;background:#252532;margin:6px 0 16px;"></div>
+
+    <!-- CHECKBOX -->
+    <div onclick="toggleNeverShow()" style="display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;padding:4px 0;">
+      <input type="checkbox" id="never-show-check" style="width:16px;height:16px;accent-color:#6c63ff;cursor:pointer;flex-shrink:0;" onclick="event.stopPropagation()"/>
+      <label for="never-show-check" style="font-size:0.8rem;color:#9090a8;cursor:pointer;user-select:none;">Don't show this again</label>
+    </div>
+
+  </div>
+</div>
 </nav>
 
 
@@ -426,24 +444,20 @@ window.handleLogout=async()=>{try{await signOut(auth);}finally{window.location.h
 const POPUP_KEY = 'cae_follow_popup_hidden';
 
 function showPopupIfNeeded(){
-  // If user checked "don't show again", never show
   if(localStorage.getItem(POPUP_KEY) === 'true') return;
-  // Show popup with small delay so dashboard loads first
   setTimeout(()=>{
     const popup = document.getElementById('follow-popup');
-    if(popup) popup.style.display = 'flex';
+    if(popup){ popup.style.display = 'flex'; }
   }, 800);
 }
 
 window.closePopup = function(){
   const popup = document.getElementById('follow-popup');
   if(!popup) return;
-  // If checkbox is ticked, save preference
   if(document.getElementById('never-show-check').checked){
     localStorage.setItem(POPUP_KEY, 'true');
   }
-  popup.classList.add('hiding');
-  setTimeout(()=>{ popup.style.display='none'; popup.classList.remove('hiding'); }, 200);
+  popup.style.display = 'none';
 };
 
 window.toggleNeverShow = function(){
@@ -452,17 +466,14 @@ window.toggleNeverShow = function(){
 };
 
 window.followClicked = function(platform){
-  // Mark as seen when they actually click follow
-  // (optional: also save that they follow so we know)
   console.log('Followed:', platform);
 };
 
-// Close popup when clicking outside the box
+// Close when clicking the dark overlay (outside the box)
 document.getElementById('follow-popup').addEventListener('click', function(e){
   if(e.target === this) closePopup();
 });
 
-// Show the popup
 showPopupIfNeeded();
 
 
