@@ -104,22 +104,28 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
 .error-box a{background:var(--accent);color:#fff;padding:9px 22px;border-radius:8px;font-weight:600;font-size:0.85rem;display:inline-block;margin-top:8px;}
 @media(max-width:960px){nav{padding:14px 24px;}.app-body{padding:48px 24px 80px;}}
 @media(max-width:600px){.nav-links{display:none;}.nav-name{display:none;}.mobile-nav{display:block;}.app-body{padding:40px 16px 110px;} .feed-wrap{padding:40px 16px 110px;} .page-wrap{padding:40px 16px 110px;}.streak-banner{flex-direction:column;}.streak-days{flex-wrap:wrap;}}
+/* ── SHIELD RECOVERY POPUP ── */
+.shield-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
+.shield-box{background:var(--card);border:1px solid rgba(232,184,75,0.3);border-radius:20px;padding:36px 32px 28px;max-width:440px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 60px rgba(232,184,75,0.08);}
+.shield-ico{font-size:4rem;display:block;margin-bottom:16px;animation:shpulse 1.5s ease infinite;}
+@keyframes shpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.shield-box h2{font-family:'Fraunces',serif;font-size:1.45rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+.shield-box h2 em{font-style:italic;color:var(--gold);}
+.shield-box p{font-size:0.86rem;color:var(--sub);margin-bottom:10px;max-width:100%;}
+.sh-stats{display:flex;justify-content:center;gap:28px;margin:18px 0 24px;padding:16px;background:rgba(232,184,75,0.05);border:1px solid rgba(232,184,75,0.15);border-radius:12px;}
+.sh-stat .sv{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;color:var(--gold);line-height:1;}
+.sh-stat .sl{font-size:0.7rem;color:var(--sub);margin-top:4px;}
+.sh-use-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b8830a);color:#000;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;border:none;transition:all .2s;margin-bottom:12px;box-shadow:0 6px 20px rgba(232,184,75,0.28);}
+.sh-use-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(232,184,75,0.4);}
+.sh-use-btn:disabled{background:var(--faint);color:var(--sub);cursor:not-allowed;transform:none;box-shadow:none;}
+.sh-loss-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:10px;background:transparent;color:var(--sub);font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;border:1px solid var(--border);transition:all .2s;}
+.sh-loss-btn:hover{border-color:var(--rose);color:var(--rose);}
+.sh-pips{display:flex;justify-content:center;gap:8px;margin-top:16px;}
+.sh-pip{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;border:2px solid rgba(232,184,75,0.3);}
+.sh-pip.used{opacity:0.2;filter:grayscale(1);}
+.sh-note{font-size:0.7rem;color:var(--faint);margin-top:10px;}
+@media(max-width:480px){.shield-box{padding:26px 16px 22px;}}
 </style>
-  <!-- Favicon -->
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
-<link rel="manifest" href="/site.webmanifest"/>
-<meta name="theme-color" content="#09090e"/>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-38TTFMHJQQ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-38TTFMHJQQ');
-</script>
 </head>
 <body>
 <nav>
@@ -128,7 +134,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
     <li><a href="dashboard.html">Dashboard</a></li>
     <li><a href="feed.html">Feed</a></li>
     <li><a href="tasks.html" class="active">Tasks</a></li>
-    <li><a href="referral.html">🎁 Refer</a></li>
     <li><a href="withdraw.html">Withdraw</a></li>
     <li><a href="profile.html">Profile</a></li>
   </ul>
@@ -141,6 +146,28 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
 
 <div class="app-shell">
   <div id="loading"><div class="spinner"></div><span>Loading your tasks…</span></div>
+
+<!-- ── SHIELD RECOVERY POPUP ── -->
+<div class="shield-overlay" id="shield-popup">
+  <div class="shield-box">
+    <span class="shield-ico">🛡️</span>
+    <h2>Streak <em>Shield Available!</em></h2>
+    <p>You missed a day and your streak would normally reset to zero. But you have a Shield — use it to recover everything instantly.</p>
+    <div class="sh-stats">
+      <div class="sh-stat"><div class="sv" id="sh-streak">0</div><div class="sl">Streak Days</div></div>
+      <div class="sh-stat"><div class="sv" id="sh-points">0</div><div class="sl">Points Saved</div></div>
+      <div class="sh-stat"><div class="sv" id="sh-left">0</div><div class="sl">Shields Left</div></div>
+    </div>
+    <button class="sh-use-btn" id="sh-use-btn" onclick="useShield()">
+      🛡️ Use Shield — Recover My Streak
+    </button>
+    <button class="sh-loss-btn" onclick="acceptLoss()">
+      ❌ Accept Loss — Reset to Zero
+    </button>
+    <div class="sh-pips" id="sh-pips"></div>
+    <div class="sh-note">Shields reset to 5 on the 1st of every month. Each shield saves your full streak and all points.</div>
+  </div>
+</div>
   <div id="error-wrap" style="display:none;" class="app-body"><div class="error-box"><span class="ei">⚠️</span><h3>Couldn't load tasks</h3><p style="color:var(--sub);font-size:0.85rem;margin-bottom:0;">Check your internet and try again.</p><a href="javascript:location.reload()">Reload</a></div></div>
   <div class="app-body" id="app-body" style="display:none;">
     <div class="page-header">
@@ -317,48 +344,6 @@ async function claimLoginTask(taskId,pts,card){
       lastUpdated:serverTimestamp()
     };
     await updateDoc(ref,updates);
-    // ── CREDIT REFERRER if this is user's first ever task ──
-try {
-  const freshSnap = await getDoc(ref);
-  const freshData = freshSnap.data() || {};
-  
-  // Only runs if this is literally the first task ever claimed
-  const allTaskDays = freshData.taskDays || {};
-  const totalDaysWithTasks = Object.keys(allTaskDays).length;
-  
-  if(totalDaysWithTasks <= 1 && freshData.referredBy){
-    const referrerId = freshData.referredBy;
-    const referrerRef = doc(db, 'users', referrerId);
-    const referrerSnap = await getDoc(referrerRef);
-    
-    if(referrerSnap.exists()){
-      const referrerData = referrerSnap.data();
-      const referrals = referrerData.referrals || [];
-      const activeCount = referrals.filter(r => r.active).length;
-      
-      // Calculate points based on tier
-      let tierPts = 50;
-      if(activeCount >= 50) tierPts = 150;
-      else if(activeCount >= 25) tierPts = 100;
-      else if(activeCount >= 10) tierPts = 75;
-      
-      // Update referral to active
-      const updatedReferrals = referrals.map(r =>
-        r.uid === currentUser.uid
-          ? { ...r, active: true, pts: tierPts }
-          : r
-      );
-      
-      await updateDoc(referrerRef, {
-        referrals: updatedReferrals,
-        referralPoints: increment(tierPts),
-        totalPoints: increment(tierPts)
-      });
-    }
-  }
-} catch(refErr) {
-  console.log('Referrer credit error:', refErr);
-}
     userData={...data,totalPoints:newTotalPoints,streak,lastTaskDay:today,taskDays:{...taskDays,[today]:{...todayObj,completed:newCompleted,loginCount:1}}};
 
     // Update streak UI
@@ -398,13 +383,46 @@ onAuthStateChanged(auth,async user=>{
     document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
     document.getElementById('nav-name').textContent=name;
 
-    // Streak broken check
+    // ── STREAK BREAK CHECK WITH SHIELD RECOVERY ──
     const today=todayKey(),yesterday=yesterdayKey();
     const lastDay=userData.lastTaskDay||'';
+    const currentMonth=new Date().toISOString().slice(0,7); // "2026-05"
+
     if(lastDay&&lastDay!==today&&lastDay!==yesterday){
-      await updateDoc(ref,{totalPoints:0,streak:0,lastTaskDay:'',taskDays:{}});
-      userData={...userData,totalPoints:0,streak:0,lastTaskDay:'',taskDays:{}};
-      alert('💀 You missed a day — your streak and all points have been permanently reset to zero. Start fresh today.');
+      // Missed at least one day — check shields
+      const storedMonth=userData.shieldsLastReset||'';
+      const rawShields=userData.streakShields;
+      // If new month, reset shields to 5
+      const availableShields=storedMonth!==currentMonth?5:(rawShields??5);
+
+      if(availableShields>0&&(userData.streak||0)>0){
+        // Show shield recovery popup — don't wipe yet
+        showShieldPopup(availableShields,userData.streak||0,userData.totalPoints||0);
+        document.getElementById('loading').style.display='none';
+        document.getElementById('app-body').style.display='block';
+        // Render current (pre-wipe) state
+        const taskDays2=userData.taskDays||{};
+        const todayObj2=getTodayData(taskDays2,today);
+        const completed2=todayObj2.completed||[];
+        document.getElementById('streak-num').textContent=userData.streak||0;
+        buildStreakDots(userData.streak||0);
+        document.getElementById('streak-sub').textContent=`⚠️ Missed a day — use your Shield to recover!`;
+        renderTasks(todayObj2,userData.streak||0);
+        return; // Wait for user choice
+      } else {
+        // No shields left — normal wipe
+        await updateDoc(ref,{totalPoints:0,streak:0,lastTaskDay:'',taskDays:{},streakShields:availableShields,shieldsLastReset:currentMonth});
+        userData={...userData,totalPoints:0,streak:0,lastTaskDay:'',taskDays:{},streakShields:availableShields};
+        alert('💀 You missed a day and have no Shields remaining. Your streak and all points have been reset to zero. Start fresh today!');
+      }
+    } else {
+      // No break — just check if shields need monthly reset
+      const storedMonth=userData.shieldsLastReset||'';
+      if(storedMonth!==currentMonth){
+        // Reset shields silently at start of new month
+        await updateDoc(ref,{streakShields:5,shieldsLastReset:currentMonth});
+        userData={...userData,streakShields:5,shieldsLastReset:currentMonth};
+      }
     }
 
     const streak=userData.streak||0;
@@ -432,6 +450,80 @@ onAuthStateChanged(auth,async user=>{
   }
 });
 
+// ── SHIELD FUNCTIONS ─────────────────────────
+let pendingShieldData={shields:0,streak:0,points:0,ref:null};
+
+function buildShieldPips(total,used){
+  const c=document.getElementById('sh-pips');if(!c)return;
+  c.innerHTML='';
+  for(let i=0;i<5;i++){
+    const d=document.createElement('div');
+    d.className=`sh-pip${i>=total-used&&i<5?' used':''}`;
+    // i < remaining = active, else used
+    d.textContent=i<(total-used)?'🛡️':'💔';
+    c.appendChild(d);
+  }
+}
+
+function showShieldPopup(shields,streak,points){
+  pendingShieldData={shields,streak,points};
+  document.getElementById('sh-streak').textContent=streak;
+  document.getElementById('sh-points').textContent=points.toLocaleString();
+  document.getElementById('sh-left').textContent=shields;
+  buildShieldPips(shields,0);
+  const popup=document.getElementById('shield-popup');
+  popup.style.display='flex';
+}
+
+window.useShield=async function(){
+  const btn=document.getElementById('sh-use-btn');
+  btn.disabled=true;btn.textContent='Recovering…';
+  const currentMonth=new Date().toISOString().slice(0,7);
+  const today=todayKey();
+  try{
+    const ref=doc(db,'users',currentUser.uid);
+    const newShields=pendingShieldData.shields-1;
+    // Restore streak — set lastTaskDay to yesterday so today can continue streak
+    await updateDoc(ref,{
+      streakShields:newShields,
+      shieldsLastReset:currentMonth,
+      lastTaskDay:yesterdayKey(), // treat as if they completed yesterday
+    });
+    userData={...userData,streakShields:newShields,shieldsLastReset:currentMonth,lastTaskDay:yesterdayKey()};
+    // Close popup
+    document.getElementById('shield-popup').style.display='none';
+    // Update streak display
+    document.getElementById('streak-num').textContent=pendingShieldData.streak;
+    buildStreakDots(pendingShieldData.streak);
+    document.getElementById('streak-sub').textContent=`🛡️ Shield used! ${pendingShieldData.streak}-day streak protected. Complete today's tasks to continue.`;
+    // Show success toast
+    const toast=document.createElement('div');
+    toast.textContent=`✅ Shield used! Streak of ${pendingShieldData.streak} days saved. ${newShields} shield${newShields!==1?'s':''} remaining this month.`;
+    toast.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(232,184,75,0.12);border:1px solid rgba(232,184,75,0.4);border-radius:10px;padding:12px 20px;color:#e8b84b;font-size:0.82rem;font-weight:600;z-index:9999;white-space:nowrap;max-width:90vw;text-align:center;';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(),4000);
+  }catch(e){
+    btn.disabled=false;btn.textContent='🛡️ Use Shield — Recover My Streak';
+    alert('Error using shield. Please try again.');
+  }
+};
+
+window.acceptLoss=async function(){
+  if(!confirm('Are you sure? This will permanently reset your streak and all points to zero. This cannot be undone.'))return;
+  const currentMonth=new Date().toISOString().slice(0,7);
+  try{
+    const ref=doc(db,'users',currentUser.uid);
+    const newShields=pendingShieldData.shields;
+    await updateDoc(ref,{totalPoints:0,streak:0,lastTaskDay:'',taskDays:{},streakShields:newShields,shieldsLastReset:currentMonth});
+    userData={...userData,totalPoints:0,streak:0,lastTaskDay:'',taskDays:{},streakShields:newShields};
+    document.getElementById('shield-popup').style.display='none';
+    document.getElementById('streak-num').textContent=0;
+    buildStreakDots(0);
+    document.getElementById('streak-sub').textContent='Start fresh — complete all 5 tasks today to begin a new streak.';
+    renderTasks(getTodayData({},todayKey()),0);
+  }catch(e){alert('Error. Please try again.');}
+};
+
 window.handleLogout=async()=>{try{await signOut(auth);}finally{window.location.href='index.html';}};
 </script>
 
@@ -440,7 +532,6 @@ window.handleLogout=async()=>{try{await signOut(auth);}finally{window.location.h
     <a href="dashboard.html" class="mnav-item"><span class="mico">🏠</span>Home</a>
     <a href="feed.html" class="mnav-item"><span class="mico">📰</span>Feed</a>
     <a href="tasks.html" class="mnav-item active"><span class="mico">🎯</span>Tasks</a>
-    <a href="referral.html" class="mnav-item"><span class="mico">🎁</span>Refer</a>
     <a href="withdraw.html" class="mnav-item"><span class="mico">💸</span>Withdraw</a>
     <a href="profile.html" class="mnav-item"><span class="mico">👤</span>Profile</a>
   </div>

@@ -278,11 +278,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
       </div>
     </div>
     <div class="warn-box" id="streak-warn" style="display:none;">💀 <strong>Don't miss today!</strong> Missing even one day permanently wipes your entire balance and all points to zero.</div>
-    <div class="stats-row">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr);">
       <div class="stat-card"><span class="s-ico">🔥</span><div class="s-val accent" id="stat-streak">0</div><div class="s-lbl">Day Streak</div><span class="s-badge badge-a" id="streak-label">Start today</span></div>
       <div class="stat-card"><span class="s-ico">🪙</span><div class="s-val gold" id="stat-points">0</div><div class="s-lbl">Points Stored</div><span class="s-badge badge-gold">Converts at 1M users</span></div>
       <div class="stat-card"><span class="s-ico">✅</span><div class="s-val green" id="stat-tasks">0/5</div><div class="s-lbl">Tasks Today</div><span class="s-badge badge-g" id="tasks-label">Not started</span></div>
       <div class="stat-card"><span class="s-ico">💸</span><div class="s-val" id="stat-withdrawn">$0.00</div><div class="s-lbl">Total Withdrawn</div><span class="s-badge badge-a">USDT TRC-20</span></div>
+      <div class="stat-card" style="border-color:rgba(232,184,75,0.2);background:rgba(232,184,75,0.03);">
+        <span class="s-ico">🛡️</span>
+        <div class="s-val gold" id="stat-shields">5</div>
+        <div class="s-lbl">Streak Shields</div>
+        <span class="s-badge badge-gold" id="shields-label">Resets monthly</span>
+      </div>
     </div>
     <div class="milestone-wrap">
       <div class="ml-left">
@@ -450,6 +456,13 @@ onAuthStateChanged(auth,async user=>{
     document.getElementById('streak-display').textContent=streak;
     document.getElementById('streak-label').textContent=streak===0?'Start today':streak<7?`${7-streak} days to bonus`:'Bonus active!';
     document.getElementById('action-tasks-sub').textContent=completedToday.length===5?'All done for today ✓':`${5-completedToday.length} tasks remaining`;
+
+    // Shields
+    const currentMonth=new Date().toISOString().slice(0,7);
+    const storedMonth=data.shieldsLastReset||'';
+    const shields=storedMonth!==currentMonth?5:(data.streakShields??5);
+    document.getElementById('stat-shields').textContent=shields;
+    document.getElementById('shields-label').textContent=shields===5?'Full — 5/5':shields===0?'None left this month':`${shields}/5 remaining`;
 
     if(streak>0&&completedToday.length<5)document.getElementById('streak-warn').style.display='block';
 
