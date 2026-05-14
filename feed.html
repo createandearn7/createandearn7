@@ -104,21 +104,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
 @media(max-width:960px){nav{padding:14px 24px;}.feed-wrap{padding:40px 16px 80px;}}
 @media(max-width:600px){.nav-links{display:none;}.nav-name{display:none;}.mobile-nav{display:block;}.feed-wrap{padding:40px 16px 90px;}.toast{bottom:90px;}}
 </style>
-  <!-- Favicon -->
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
-<link rel="manifest" href="/site.webmanifest"/>
-<meta name="theme-color" content="#09090e"/>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-38TTFMHJQQ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-38TTFMHJQQ');
-</script>
 </head>
 <body>
 <nav>
@@ -127,7 +112,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
     <li><a href="dashboard.html">Dashboard</a></li>
     <li><a href="feed.html" class="active">Feed</a></li>
     <li><a href="tasks.html">Tasks</a></li>
-    <li><a href="referral.html">🎁 Refer</a></li>
     <li><a href="withdraw.html">Withdraw</a></li>
     <li><a href="profile.html">Profile</a></li>
   </ul>
@@ -245,13 +229,21 @@ async function toggleFollow(uid,btn){
 async function toggleLike(postId,btn,countEl){
   try{
     const ref=doc(db,'posts',postId);
-    const likes=(await getDoc(ref)).data().likes||[];
+    const snap=await getDoc(ref);
+    const data=snap.data()||{};
+    const likes=data.likes||[];
     if(likes.includes(currentUser.uid)){
-      await updateDoc(ref,{likes:arrayRemove(currentUser.uid),likeCount:increment(-1)});
-      btn.classList.remove('liked');countEl.textContent=Math.max(0,parseInt(countEl.textContent)-1);
+      // Unlike — remove from array, recalculate count from array
+      const newLikes=likes.filter(id=>id!==currentUser.uid);
+      await updateDoc(ref,{likes:newLikes,likeCount:Math.max(0,newLikes.length)});
+      btn.classList.remove('liked');
+      countEl.textContent=Math.max(0,newLikes.length);
     }else{
-      await updateDoc(ref,{likes:arrayUnion(currentUser.uid),likeCount:increment(1)});
-      btn.classList.add('liked');countEl.textContent=parseInt(countEl.textContent)+1;
+      // Like — add to array, recalculate count from array
+      const newLikes=[...likes,currentUser.uid];
+      await updateDoc(ref,{likes:newLikes,likeCount:newLikes.length});
+      btn.classList.add('liked');
+      countEl.textContent=newLikes.length;
       await trackAction('like');
     }
   }catch(e){showToast('Error. Try again.');}
@@ -370,7 +362,19 @@ onAuthStateChanged(auth,async user=>{
     const snap=await getDocs(query(collection(db,'posts'),orderBy('createdAt','desc')));
     const list=document.getElementById('posts-list');
     if(snap.empty){document.getElementById('feed-empty').style.display='block';}
-    else{snap.forEach(d=>{list.appendChild(buildCard(d.data(),d.id,following));updateDoc(doc(db,'posts',d.id),{views:increment(1)}).catch(()=>{});});}
+    else{
+      snap.forEach(d=>{
+        const data=d.data();
+        // Self-heal: if likeCount is negative or out of sync, fix it silently
+        const realCount=(data.likes||[]).length;
+        if((data.likeCount||0)<0||(data.likeCount||0)!==realCount){
+          updateDoc(doc(db,'posts',d.id),{likeCount:realCount}).catch(()=>{});
+          data.likeCount=realCount;
+        }
+        list.appendChild(buildCard(data,d.id,following));
+        updateDoc(doc(db,'posts',d.id),{views:increment(1)}).catch(()=>{});
+      });
+    }
 
     document.getElementById('cat-tabs').addEventListener('click',e=>{
       const btn=e.target.closest('.cat-tab');if(!btn)return;
@@ -397,7 +401,6 @@ window.handleLogout=async()=>{try{await signOut(auth);}finally{window.location.h
     <a href="dashboard.html" class="mnav-item"><span class="mico">🏠</span>Home</a>
     <a href="feed.html" class="mnav-item active"><span class="mico">📰</span>Feed</a>
     <a href="tasks.html" class="mnav-item"><span class="mico">🎯</span>Tasks</a>
-    <a href="referral.html" class="mnav-item"><span class="mico">🎁</span>Refer</a>
     <a href="withdraw.html" class="mnav-item"><span class="mico">💸</span>Withdraw</a>
     <a href="profile.html" class="mnav-item"><span class="mico">👤</span>Profile</a>
   </div>
