@@ -270,6 +270,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
         <span class="s-ico">⏳</span>
         <div class="s-val" id="stat-pending">0</div>
         <div class="s-lbl">Pending</div>
+        <button id="check-btn" onclick="checkReferrals()" style="margin-top:10px;background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.25);color:var(--accent);border-radius:6px;padding:4px 10px;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .2s;width:100%;" onmouseover="this.style.background='rgba(108,99,255,0.2)'" onmouseout="this.style.background='rgba(108,99,255,0.1)'">🔄 Check Now</button>
       </div>
     </div>
 
@@ -300,15 +301,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
             <span class="s-name">WhatsApp</span>
           </a>
           <a class="share-btn share-tw" id="share-tw" href="#" target="_blank">
-            <span class="s-ico-big">𝕏</span>
+            <span class="s-ico-big">🐦</span>
             <span class="s-name">X / Twitter</span>
           </a>
           <a class="share-btn share-fb" id="share-fb" href="#" target="_blank">
-            <span class="s-ico-big">ⓕ</span>
+            <span class="s-ico-big">📘</span>
             <span class="s-name">Facebook</span>
           </a>
           <a class="share-btn share-tg" id="share-tg" href="#" target="_blank">
-            <span class="s-ico-big">⌲</span>
+            <span class="s-ico-big">✈️</span>
             <span class="s-name">Telegram</span>
           </a>
         </div>
@@ -391,7 +392,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
     <a href="feed.html" class="mnav-item"><span class="mico">📰</span>Feed</a>
     <a href="tasks.html" class="mnav-item"><span class="mico">🎯</span>Tasks</a>
     <a href="referral.html" class="mnav-item active"><span class="mico">🎁</span>Refer</a>
-    <a href="withdraw.html" class="mnav-item active"><span class="mico">💸</span>Withdraw</a>
     <a href="profile.html" class="mnav-item"><span class="mico">👤</span>Profile</a>
   </div>
 </nav>
@@ -399,7 +399,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc, arrayUnion, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 const firebaseConfig={apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",authDomain:"createandearn-b7502.firebaseapp.com",projectId:"createandearn-b7502",storageBucket:"createandearn-b7502.firebasestorage.app",messagingSenderId:"311184359792",appId:"1:311184359792:web:3b15ad30849e5645390fb5"};
 const app=initializeApp(firebaseConfig);
@@ -414,18 +414,18 @@ const TIERS=[
   {id:'t3',label:'Champion',badge:'t3',range:'25–49 referrals',min:25,max:49,pts:100},
   {id:'t4',label:'Legend',badge:'t4',range:'50+ referrals',min:50,max:Infinity,pts:150},
 ];
-
 function getTier(count){return TIERS.find(t=>count>=t.min&&count<=t.max)||TIERS[0];}
 
-function showToast(msg){
+function showToast(msg,col){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast show';
-  setTimeout(()=>t.className='toast',2500);
+  t.style.borderColor=col==='green'?'rgba(0,200,150,0.4)':'rgba(108,99,255,0.3)';
+  setTimeout(()=>{t.className='toast';},3000);
 }
 
 function buildShareLinks(link){
   const url=encodeURIComponent(link);
-  const txt=encodeURIComponent(`I'm earning real USDT on CreateAndEarn — zero investment! Join through my link and we both earn bonus points:`);
+  const txt=encodeURIComponent(`I'm earning real USDT on CreateAndEarn — zero investment! Join through my link:`);
   document.getElementById('share-wa').href=`https://wa.me/?text=${txt}%20${url}`;
   document.getElementById('share-tw').href=`https://twitter.com/intent/tweet?text=${txt}&url=${url}`;
   document.getElementById('share-fb').href=`https://www.facebook.com/sharer/sharer.php?u=${link}`;
@@ -449,10 +449,7 @@ function buildTierList(activeCount){
           <div class="tier-range">${isLocked?'🔒 Locked':'✓ Unlocked'}</div>
         </div>
       </div>
-      <div class="tier-pts">
-        <div class="tp-val">+${tier.pts} pts</div>
-        <div class="tp-lbl">per referral</div>
-      </div>`;
+      <div class="tier-pts"><div class="tp-val">+${tier.pts} pts</div><div class="tp-lbl">per referral</div></div>`;
     list.appendChild(div);
   });
 }
@@ -468,7 +465,7 @@ function buildTierProgress(activeCount){
   }
   const progress=activeCount-currentTier.min;
   const needed=nextTier.min-currentTier.min;
-  const pct=Math.round((progress/needed)*100);
+  const pct=Math.max(0,Math.round((progress/needed)*100));
   document.getElementById('tier-prog-label').textContent=`${activeCount} referrals — ${progress} of ${needed} toward ${nextTier.label}`;
   document.getElementById('tier-prog-next').textContent=`${nextTier.label} tier at ${nextTier.min} referrals (+${nextTier.pts} pts each)`;
   document.getElementById('tier-prog-fill').style.width=`${pct}%`;
@@ -487,9 +484,84 @@ function buildHistory(referrals){
         <strong>${r.name||'Anonymous'}</strong>
         <span>Joined ${r.joinedAt||'—'}</span>
       </div>
-      <span class="ref-status ${r.active?'status-done':'status-pending'}">${r.active?'Active':'Pending'}</span>
-      <div class="ref-pts">${r.active?`+${r.pts} pts`:'—'}</div>
+      <span class="ref-status ${r.active?'status-done':'status-pending'}">${r.active?'✅ Active':'⏳ Pending'}</span>
+      <div class="ref-pts">${r.active?`+${r.pts} pts`:'Waiting for first task'}</div>
     </div>`).join('');
+}
+
+function updateStatsUI(referrals,totalPts){
+  const activeReferrals=referrals.filter(r=>r.active);
+  const pendingReferrals=referrals.filter(r=>!r.active);
+  const activeCount=activeReferrals.length;
+  const currentTier=getTier(activeCount);
+  document.getElementById('stat-total').textContent=referrals.length;
+  document.getElementById('stat-active').textContent=activeCount;
+  document.getElementById('stat-pts').textContent=totalPts.toLocaleString();
+  document.getElementById('stat-pending').textContent=pendingReferrals.length;
+  document.getElementById('hero-pts-display').textContent=`+${currentTier.pts}`;
+  document.getElementById('hero-tier-name').textContent=`${currentTier.label} tier`;
+  buildTierList(activeCount);
+  buildTierProgress(activeCount);
+  buildHistory(referrals);
+}
+
+// ── AUTO-ACTIVATE PENDING REFERRALS ──────────────────
+// Checks each pending referral's Firestore doc.
+// If they have any completed tasks → activate & credit points.
+async function checkAndActivatePending(referrals, userRef){
+  const pending=referrals.filter(r=>!r.active&&r.uid);
+  if(pending.length===0)return referrals;
+
+  let anyActivated=false;
+  let totalPtsEarned=0;
+  const activeCount=referrals.filter(r=>r.active).length;
+
+  const updatedReferrals=[...referrals];
+
+  for(const ref of pending){
+    try{
+      const refSnap=await getDoc(doc(db,'users',ref.uid));
+      if(!refSnap.exists())continue;
+      const refData=refSnap.data();
+
+      // Check if they've done ANY task:
+      // lastTaskDay set, OR taskDays has entries, OR streak > 0, OR totalPoints > 0
+      const hasDoneTask=
+        refData.lastTaskDay ||
+        (refData.taskDays && Object.keys(refData.taskDays).length > 0) ||
+        (refData.streak && refData.streak > 0) ||
+        (refData.totalPoints && refData.totalPoints > 0);
+
+      if(hasDoneTask){
+        // Calculate tier pts at time of activation
+        const currentActiveCount=referrals.filter(r=>r.active).length + (anyActivated?1:0);
+        const tier=getTier(currentActiveCount);
+        const tierPts=tier.pts;
+
+        // Update this referral to active
+        const idx=updatedReferrals.findIndex(r=>r.uid===ref.uid);
+        if(idx>=0){
+          updatedReferrals[idx]={...updatedReferrals[idx],active:true,pts:tierPts,activatedAt:new Date().toISOString().split('T')[0]};
+        }
+        totalPtsEarned+=tierPts;
+        anyActivated=true;
+      }
+    }catch(e){
+      console.log('Could not check referral uid:',ref.uid,e);
+    }
+  }
+
+  if(anyActivated){
+    // Save updated referrals array + credit points
+    await updateDoc(userRef,{
+      referrals:updatedReferrals,
+      referralPoints:increment(totalPtsEarned),
+      totalPoints:increment(totalPtsEarned)
+    });
+    showToast(`🎉 ${updatedReferrals.filter(r=>r.active).length-referrals.filter(r=>r.active).length} referral(s) activated! +${totalPtsEarned} pts earned`,'green');
+    return updatedReferrals;
+  }
+  return referrals;
 }
 
 window.copyLink=async()=>{
@@ -506,6 +578,22 @@ window.copyLink=async()=>{
   }
 };
 
+// Manual refresh button
+window.checkReferrals=async()=>{
+  const btn=document.getElementById('check-btn');
+  if(btn){btn.disabled=true;btn.textContent='Checking…';}
+  const ref=doc(db,'users',currentUser.uid);
+  const snap=await getDoc(ref);
+  const data=snap.data()||{};
+  let referrals=data.referrals||[];
+  referrals=await checkAndActivatePending(referrals,ref);
+  const totalPts=data.referralPoints||(referrals.filter(r=>r.active).reduce((a,r)=>a+r.pts,0))||0;
+  const freshSnap=await getDoc(ref);
+  const freshPts=freshSnap.data().referralPoints||0;
+  updateStatsUI(referrals,freshPts);
+  if(btn){btn.disabled=false;btn.textContent='🔄 Check Now';}
+};
+
 const authTimeout=setTimeout(()=>{window.location.href='index.html';},8000);
 
 onAuthStateChanged(auth,async user=>{
@@ -518,14 +606,11 @@ onAuthStateChanged(auth,async user=>{
     let snap=await getDoc(ref);
     userData=snap.exists()?snap.data():{};
     const name=userData.fullName||user.displayName||user.email.split('@')[0];
-
     document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
     document.getElementById('nav-name').textContent=name;
 
-    // Generate referral code from UID (first 8 chars, uppercase)
+    // Ensure referral code exists
     const refCode=user.uid.slice(0,8).toUpperCase();
-
-    // Save referral code to Firestore if not already saved
     if(!userData.referralCode){
       await updateDoc(ref,{referralCode:refCode});
       userData.referralCode=refCode;
@@ -535,24 +620,19 @@ onAuthStateChanged(auth,async user=>{
     document.getElementById('ref-link').value=refLink;
     buildShareLinks(refLink);
 
-    // Stats
-    const referrals=userData.referrals||[];
-    const activeReferrals=referrals.filter(r=>r.active);
-    const pendingReferrals=referrals.filter(r=>!r.active);
-    const totalPts=userData.referralPoints||0;
-    const activeCount=activeReferrals.length;
-    const currentTier=getTier(activeCount);
+    // Load referrals
+    let referrals=userData.referrals||[];
+    let totalPts=userData.referralPoints||0;
 
-    document.getElementById('stat-total').textContent=referrals.length;
-    document.getElementById('stat-active').textContent=activeCount;
-    document.getElementById('stat-pts').textContent=totalPts.toLocaleString();
-    document.getElementById('stat-pending').textContent=pendingReferrals.length;
-    document.getElementById('hero-pts-display').textContent=`+${currentTier.pts}`;
-    document.getElementById('hero-tier-name').textContent=`${currentTier.label} tier`;
+    // Auto-scan pending referrals on page load
+    if(referrals.some(r=>!r.active&&r.uid)){
+      referrals=await checkAndActivatePending(referrals,ref);
+      // Refresh pts from Firestore after possible update
+      const freshSnap=await getDoc(ref);
+      totalPts=freshSnap.data().referralPoints||0;
+    }
 
-    buildTierList(activeCount);
-    buildTierProgress(activeCount);
-    buildHistory(referrals);
+    updateStatsUI(referrals,totalPts);
 
     document.getElementById('loading').style.display='none';
     document.getElementById('app-body').style.display='block';
