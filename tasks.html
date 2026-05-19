@@ -209,56 +209,95 @@ nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:cen
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 const firebaseConfig={apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",authDomain:"createandearn-b7502.firebaseapp.com",projectId:"createandearn-b7502",storageBucket:"createandearn-b7502.firebasestorage.app",messagingSenderId:"311184359792",appId:"1:311184359792:web:3b15ad30849e5645390fb5"};
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-let currentUser=null,userData=null;
+let currentUser=null;
 
-// Task definitions — type: 'claim' = manual button here, 'feed' = auto via feed actions
-const TASKS=[
-  {id:'login',type:'claim',tag:'tag-login',icon:'🔐',label:'Daily Login',title:'Claim Daily Login Bonus',desc:'Visit the Task Center and click Claim to register today as an active day. This is the one task you manually claim here every day.',pts:10,cap:'Once per day · resets midnight',time:'~1 min',cap2:1},
-  {id:'like', type:'feed', tag:'tag-like', icon:'❤️',label:'Like Task',  title:'Like 20 Posts in the Feed',desc:'Go to the Feed and like 20 different posts. Points are credited automatically when you reach 20 likes. You cannot claim this manually.',pts:20,cap:'20 likes/day · auto-tracked',time:'~4 min',cap2:20},
-  {id:'follow',type:'feed',tag:'tag-follow',icon:'👣',label:'Follow Task',title:'Follow 5 Creators in the Feed',desc:'Go to the Feed and follow 5 different creators you haven\'t followed before. Auto-completes when you hit 5. Cannot be claimed manually.',pts:15,cap:'5 follows/day · auto-tracked',time:'~2 min',cap2:5},
-  {id:'comment',type:'feed',tag:'tag-comment',icon:'💬',label:'Comment Task',title:'Leave 5 Comments in the Feed',desc:'Go to the Feed and leave 5 comments of at least 5 characters each on different posts. Auto-completes when you hit 5.',pts:25,cap:'5 comments/day · auto-tracked',time:'~6 min',cap2:5},
-  {id:'share', type:'feed',tag:'tag-share', icon:'🔗',label:'Share Task', title:'Share 2 Posts from the Feed',desc:'Go to the Feed, open a post and share it via WhatsApp, X, Facebook or Telegram. Auto-completes after 2 shares.',pts:20,cap:'2 shares/day · auto-tracked',time:'~2 min',cap2:2},
-];
-const TOTAL_PTS=90;
-
-function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-function yesterdayKey(){const d=new Date();d.setDate(d.getDate()-1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-
-function updateCountdown(){
-  const now=new Date(),m=new Date();m.setHours(24,0,0,0);
-  const diff=m-now,h=Math.floor(diff/3600000),min=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
-  const el=document.getElementById('countdown');if(el)el.textContent=`${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+// ── DATE HELPERS ──────────────────────────────────────
+function dateKey(offset=0){
+  const d=new Date();
+  d.setDate(d.getDate()+offset);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-setInterval(updateCountdown,1000);updateCountdown();
+const todayKey=()=>dateKey(0);
+const yesterdayKey=()=>dateKey(-1);
+const monthKey=()=>new Date().toISOString().slice(0,7);
 
+// ── TASK DEFINITIONS ─────────────────────────────────
+const TASKS=[
+  {id:'login', type:'claim', tag:'tag-login', icon:'🔐', label:'Daily Login',   title:'Claim Daily Login Bonus',
+   desc:'Visit the Task Center every day and click Claim. This registers your streak for the day.',
+   pts:10, cap:'Once per day', cap2:1, time:'~1 min'},
+  {id:'like',  type:'feed',  tag:'tag-like',  icon:'❤️', label:'Like Task',    title:'Like 20 Posts in the Feed',
+   desc:'Go to the Feed and like 20 posts. Points credited automatically when you reach 20.',
+   pts:20, cap:'20 likes / day · auto-tracked', cap2:20, time:'~4 min'},
+  {id:'follow',type:'feed',  tag:'tag-follow',icon:'👣', label:'Follow Task',  title:'Follow 5 Creators in the Feed',
+   desc:'Follow 5 new creators in the Feed. Auto-completes when you hit 5.',
+   pts:15, cap:'5 follows / day · auto-tracked', cap2:5, time:'~2 min'},
+  {id:'comment',type:'feed', tag:'tag-comment',icon:'💬',label:'Comment Task', title:'Leave 5 Comments in the Feed',
+   desc:'Comment on 5 posts (min 5 chars each). Auto-completes when you hit 5.',
+   pts:25, cap:'5 comments / day · auto-tracked', cap2:5, time:'~6 min'},
+  {id:'share',type:'feed',   tag:'tag-share', icon:'🔗', label:'Share Task',   title:'Share 2 Posts from the Feed',
+   desc:'Share 2 posts via WhatsApp, X, Facebook or Telegram. Auto-completes after 2 shares.',
+   pts:20, cap:'2 shares / day · auto-tracked', cap2:2, time:'~2 min'},
+];
+
+// ── COUNTDOWN ────────────────────────────────────────
+function updateCountdown(){
+  const now=new Date(), mid=new Date(); mid.setHours(24,0,0,0);
+  const diff=mid-now;
+  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+  const el=document.getElementById('countdown');
+  if(el) el.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+setInterval(updateCountdown,1000); updateCountdown();
+
+// ── STREAK DOTS ──────────────────────────────────────
 function buildStreakDots(streak){
-  const c=document.getElementById('streak-dots');if(!c)return;c.innerHTML='';
+  const c=document.getElementById('streak-dots'); if(!c)return; c.innerHTML='';
   const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   for(let i=0;i<7;i++){
-    const d=document.createElement('div');
-    if(i<streak%7){d.className='streak-day done';d.innerHTML=`<span>✓</span><span style="font-size:0.6rem">${days[i]}</span>`;}
-    else if(i===streak%7&&streak>0){d.className='streak-day today';d.innerHTML=`<span>→</span><span style="font-size:0.6rem">${days[i]}</span>`;}
-    else{d.className='streak-day';d.innerHTML=`<span>·</span><span style="font-size:0.6rem">${days[i]}</span>`;}
-    c.appendChild(d);
+    const el=document.createElement('div');
+    const pos=streak===0?i:(i%(streak>7?7:streak+1));
+    if(streak>0 && i<streak%7){
+      el.className='streak-day done';
+      el.innerHTML='<span>✓</span><span style="font-size:0.6rem">'+days[i]+'</span>';
+    } else if(streak>0 && i===streak%7){
+      el.className='streak-day today';
+      el.innerHTML='<span>→</span><span style="font-size:0.6rem">'+days[i]+'</span>';
+    } else {
+      el.className='streak-day';
+      el.innerHTML='<span>·</span><span style="font-size:0.6rem">'+days[i]+'</span>';
+    }
+    c.appendChild(el);
   }
 }
 
-function getTodayData(taskDays,today){
-  if(!taskDays||!taskDays[today])return{completed:[],loginCount:0,likeCount:0,followCount:0,commentCount:0,shareCount:0};
+// ── GET TODAY DATA FROM FIRESTORE ────────────────────
+function getTodayData(taskDays, today){
+  if(!taskDays||!taskDays[today])
+    return{completed:[],loginCount:0,likeCount:0,followCount:0,commentCount:0,shareCount:0};
   const v=taskDays[today];
-  if(Array.isArray(v))return{completed:v,loginCount:v.includes('login')?1:0,likeCount:0,followCount:0,commentCount:0,shareCount:0};
-  return{completed:v.completed||[],loginCount:v.loginCount||0,likeCount:v.likeCount||0,followCount:v.followCount||0,commentCount:v.commentCount||0,shareCount:v.shareCount||0};
+  if(Array.isArray(v))
+    return{completed:v,loginCount:v.includes('login')?1:0,likeCount:0,followCount:0,commentCount:0,shareCount:0};
+  return{
+    completed:v.completed||[],
+    loginCount:v.loginCount||0,
+    likeCount:v.likeCount||0,
+    followCount:v.followCount||0,
+    commentCount:v.commentCount||0,
+    shareCount:v.shareCount||0
+  };
 }
 
-function renderTasks(todayObj,streak){
-  const container=document.getElementById('tasks-container');if(!container)return;
+// ── RENDER TASKS ──────────────────────────────────────
+function renderTasks(todayObj, streak){
+  const container=document.getElementById('tasks-container'); if(!container)return;
   container.innerHTML='';
   const completed=todayObj.completed||[];
   let todayPts=0;
@@ -266,100 +305,189 @@ function renderTasks(todayObj,streak){
 
   TASKS.forEach(task=>{
     const isDone=completed.includes(task.id);
-    if(isDone){const t=TASKS.find(x=>x.id===task.id);if(t)todayPts+=t.pts;}
+    if(isDone) todayPts+=task.pts;
     const count=counts[task.id]||0;
-    const pct=Math.min(100,Math.round(count/task.cap2*100));
-
+    const pct=Math.min(100,Math.round((count/task.cap2)*100));
     const card=document.createElement('div');
-    card.className=`task-card${isDone?' done':''}`;
+    card.className='task-card'+(isDone?' done':'');
 
     let actionHtml='';
     if(isDone){
-      actionHtml=`<span class="done-badge">✓ Done · +${task.pts} pts</span>`;
+      actionHtml='<span class="done-badge">✓ Done · +'+task.pts+' pts</span>';
     } else if(task.type==='claim'){
-      actionHtml=`<button class="claim-btn" data-id="${task.id}" data-pts="${task.pts}">Claim +${task.pts} pts →</button>`;
+      actionHtml='<button class="claim-btn" data-id="'+task.id+'" data-pts="'+task.pts+'">Claim +'+task.pts+' pts →</button>';
     } else {
-      actionHtml=`<a href="feed.html" class="feed-btn">📰 Go to Feed →</a>`;
+      actionHtml='<a href="feed.html" class="feed-btn">📰 Go to Feed →</a>';
     }
 
-    card.innerHTML=`
-      <span class="task-tag ${task.tag}">${task.icon} ${task.label}</span>
-      <h3>${task.title}</h3>
-      <p>${task.desc}</p>
-      ${task.type==='feed'&&!isDone?`
-        <div class="task-prog">
-          <div class="task-prog-label"><span>Progress today</span><span>${count} / ${task.cap2}</span></div>
-          <div class="task-prog-track"><div class="task-prog-fill" style="width:${pct}%"></div></div>
-        </div>`:''}
-      <div class="task-foot">
-        <div class="task-reward">+${task.pts} pts<small>${task.cap}</small></div>
-        <div class="task-right"><span class="task-time">${task.time}</span>${actionHtml}</div>
-      </div>`;
+    card.innerHTML=
+      '<span class="task-tag '+task.tag+'">'+task.icon+' '+task.label+'</span>'+
+      '<h3>'+task.title+'</h3>'+
+      '<p>'+task.desc+'</p>'+
+      (task.type==='feed'&&!isDone?
+        '<div class="task-prog"><div class="task-prog-label"><span>Progress today</span><span>'+count+' / '+task.cap2+'</span></div><div class="task-prog-track"><div class="task-prog-fill" style="width:'+pct+'%"></div></div></div>'
+        :'')+
+      '<div class="task-foot"><div class="task-reward">+'+task.pts+' pts<small>'+task.cap+'</small></div>'+
+      '<div class="task-right"><span class="task-time">'+task.time+'</span>'+actionHtml+'</div></div>';
 
-    // Attach claim handler for login task only
     if(task.type==='claim'&&!isDone){
-      card.querySelector('.claim-btn').addEventListener('click',(btn)=>claimLoginTask(task.id,task.pts,card));
+      card.querySelector('.claim-btn').addEventListener('click',()=>claimLoginTask(task.pts, card));
     }
     container.appendChild(card);
   });
 
-  // Update progress UI
   const done=completed.length;
-  document.getElementById('prog-title').textContent=`Today's Progress — ${done} / 5 tasks`;
-  document.getElementById('prog-fill').style.width=`${Math.round(done/5*100)}%`;
-  document.getElementById('prog-stat').textContent=`${Math.round(done/5*100)}% complete — ${todayPts} pts earned today`;
+  document.getElementById('prog-title').textContent='Today's Progress — '+done+' / 5 tasks';
+  document.getElementById('prog-fill').style.width=Math.round(done/5*100)+'%';
+  document.getElementById('prog-stat').textContent=Math.round(done/5*100)+'% complete — '+todayPts+' pts earned today';
 }
 
-async function claimLoginTask(taskId,pts,card){
+// ── CLAIM LOGIN TASK ──────────────────────────────────
+async function claimLoginTask(pts, card){
   if(!currentUser)return;
   const btn=card.querySelector('.claim-btn');
-  if(btn){btn.disabled=true;btn.textContent='Claiming…';}
+  if(btn){btn.disabled=true; btn.textContent='Claiming…';}
 
   try{
-    const today=todayKey(),yesterday=yesterdayKey();
+    const today=todayKey();
+    const yesterday=yesterdayKey();
     const ref=doc(db,'users',currentUser.uid);
+
+    // Always fresh read
     const snap=await getDoc(ref);
     const data=snap.data()||{};
     const taskDays=data.taskDays||{};
     const todayObj=getTodayData(taskDays,today);
-    const completed=todayObj.completed||[];
 
-    if(completed.includes(taskId)){if(btn){btn.textContent='Already done';}return;}
+    // Guard: already done today
+    if((todayObj.completed||[]).includes('login')){
+      if(btn){btn.textContent='Already done';}
+      return;
+    }
 
-    const newCompleted=[...completed,taskId];
-    const newTotalPoints=(data.totalPoints||0)+pts;
-
-    // Streak logic
-    let streak=data.streak||0;
+    const prevStreak=Number(data.streak)||0;
     const lastDay=data.lastTaskDay||'';
-    if(lastDay===yesterday){streak+=1;}
-    else if(lastDay!==today){streak=1;}
+    const prevPoints=Number(data.totalPoints)||0;
 
-    const updates={
-      totalPoints:newTotalPoints,
-      streak,
-      lastTaskDay:today,
-      [`taskDays.${today}.completed`]:newCompleted,
-      [`taskDays.${today}.loginCount`]:1,
-      lastUpdated:serverTimestamp()
-    };
-    await updateDoc(ref,updates);
-    userData={...data,totalPoints:newTotalPoints,streak,lastTaskDay:today,taskDays:{...taskDays,[today]:{...todayObj,completed:newCompleted,loginCount:1}}};
+    // Streak: only increment if lastDay was exactly yesterday
+    let newStreak;
+    if(lastDay===yesterday)     newStreak=prevStreak+1;
+    else if(lastDay===today)    newStreak=prevStreak;   // same day (shouldn't happen)
+    else                         newStreak=1;            // first day or fresh start
 
-    // Update streak UI
-    document.getElementById('streak-num').textContent=streak;
-    buildStreakDots(streak);
-    document.getElementById('streak-sub').textContent=streak===1?'Streak started! Come back tomorrow.':streak>=7?`${streak}-day streak! Bonus active.`:`${streak}-day streak. Don't miss tomorrow.`;
+    const newCompleted=[...(todayObj.completed||[]),'login'];
 
-    renderTasks(getTodayData(userData.taskDays,today),streak);
-    if(newCompleted.length===5)document.getElementById('streak-warn').style.display='none';
+    // ✅ Use dot-notation so we DON'T wipe feed action counts
+    await updateDoc(ref,{
+      streak: newStreak,
+      totalPoints: prevPoints+pts,
+      lastTaskDay: today,
+      [`taskDays.${today}.completed`]: newCompleted,
+      [`taskDays.${today}.loginCount`]: 1,
+      lastUpdated: serverTimestamp()
+    });
+
+    // Update UI
+    document.getElementById('streak-num').textContent=newStreak;
+    buildStreakDots(newStreak);
+    document.getElementById('streak-sub').textContent=
+      newStreak===1?'🔥 Streak started! Come back tomorrow.':
+      newStreak>=7?'🏆 '+newStreak+'-day streak! Bonus active.':
+      '🔥 '+newStreak+'-day streak. Don\'t miss tomorrow.';
+
+    const updatedTodayObj={...todayObj, completed:newCompleted, loginCount:1};
+    renderTasks(updatedTodayObj, newStreak);
+    if(newCompleted.length===5)
+      document.getElementById('streak-warn').style.display='none';
+
   }catch(err){
     console.error('Claim error:',err);
-    if(btn){btn.disabled=false;btn.textContent=`Claim +${pts} pts →`;}
-    alert('Error claiming. Please try again.');
+    if(btn){btn.disabled=false; btn.textContent='Claim +'+pts+' pts →';}
+    alert('Error claiming task. Please try again.');
   }
 }
 
+// ── SHIELD POPUP ──────────────────────────────────────
+let _shieldData={shields:0,streak:0,points:0};
+
+function buildShieldPips(shields){
+  const c=document.getElementById('sh-pips'); if(!c)return; c.innerHTML='';
+  for(let i=0;i<5;i++){
+    const d=document.createElement('div');
+    d.className='sh-pip'+(i>=shields?' used':'');
+    d.textContent=i<shields?'🛡️':'💔';
+    c.appendChild(d);
+  }
+}
+
+function showShieldPopup(shields,streak,points){
+  _shieldData={shields,streak,points};
+  document.getElementById('sh-streak').textContent=streak;
+  document.getElementById('sh-points').textContent=points.toLocaleString();
+  document.getElementById('sh-left').textContent=shields;
+  buildShieldPips(shields);
+  // Move popup to body so it's never inside a hidden parent
+  const popup=document.getElementById('shield-popup');
+  document.body.appendChild(popup);
+  popup.style.display='flex';
+}
+
+window.useShield=async function(){
+  const btn=document.getElementById('sh-use-btn');
+  btn.disabled=true; btn.textContent='Recovering…';
+  try{
+    const ref=doc(db,'users',currentUser.uid);
+    const newShields=_shieldData.shields-1;
+    // ✅ Set lastTaskDay to yesterday so streak continues today
+    // ✅ Use dot-notation, don't touch taskDays
+    await updateDoc(ref,{
+      streakShields: newShields,
+      shieldsLastReset: monthKey(),
+      lastTaskDay: yesterdayKey()
+    });
+    document.getElementById('shield-popup').style.display='none';
+    document.getElementById('streak-num').textContent=_shieldData.streak;
+    buildStreakDots(_shieldData.streak);
+    document.getElementById('streak-warn').style.display='block';
+    document.getElementById('streak-sub').textContent=
+      '🛡️ Shield used! '+_shieldData.streak+'-day streak protected. Complete today\'s tasks to continue.';
+    btn.disabled=false; btn.textContent='🛡️ Use Shield — Recover My Streak';
+
+    // Toast
+    const toast=document.createElement('div');
+    toast.textContent='✅ Shield used! Streak of '+_shieldData.streak+' days saved. '+newShields+' shield'+(newShields!==1?'s':'')+' remaining this month.';
+    toast.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(232,184,75,0.12);border:1px solid rgba(232,184,75,0.4);border-radius:10px;padding:12px 20px;color:#e8b84b;font-size:0.82rem;font-weight:600;z-index:99999;white-space:nowrap;max-width:90vw;text-align:center;';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(),4000);
+  }catch(e){
+    console.error(e);
+    btn.disabled=false; btn.textContent='🛡️ Use Shield — Recover My Streak';
+    alert('Error using shield. Try again.');
+  }
+};
+
+window.acceptLoss=async function(){
+  if(!confirm('Are you sure? Your streak and ALL points will be permanently reset to zero. This cannot be undone.'))return;
+  try{
+    const ref=doc(db,'users',currentUser.uid);
+    // ✅ Don't touch taskDays — just reset streak/points
+    await updateDoc(ref,{
+      totalPoints:0,
+      streak:0,
+      lastTaskDay:'',
+      streakShields:_shieldData.shields,
+      shieldsLastReset:monthKey()
+    });
+    document.getElementById('shield-popup').style.display='none';
+    document.getElementById('streak-num').textContent=0;
+    buildStreakDots(0);
+    document.getElementById('streak-warn').style.display='none';
+    document.getElementById('streak-sub').textContent='Start fresh — complete all 5 tasks today to begin a new streak.';
+    renderTasks(getTodayData({},todayKey()),0);
+  }catch(e){alert('Error. Please try again.');}
+};
+
+// ── AUTH + LOAD ───────────────────────────────────────
 const authTimeout=setTimeout(()=>{
   document.getElementById('loading').style.display='none';
   document.getElementById('error-wrap').style.display='block';
@@ -367,162 +495,98 @@ const authTimeout=setTimeout(()=>{
 
 onAuthStateChanged(auth,async user=>{
   clearTimeout(authTimeout);
-  if(!user){window.location.href='index.html';return;}
+  if(!user){window.location.href='index.html'; return;}
   currentUser=user;
 
   try{
     const ref=doc(db,'users',user.uid);
     let snap=await getDoc(ref);
     if(!snap.exists()){
-      await setDoc(ref,{fullName:user.displayName||'',email:user.email,role:'',totalPoints:0,streak:0,taskDays:{},createdAt:serverTimestamp()});
+      await setDoc(ref,{
+        fullName:user.displayName||'', email:user.email,
+        streak:0, totalPoints:0, taskDays:{},
+        streakShields:5, shieldsLastReset:monthKey(),
+        createdAt:serverTimestamp()
+      });
       snap=await getDoc(ref);
     }
-    userData=snap.data()||{};
-
-    const name=userData.fullName||user.displayName||user.email.split('@')[0];
+    const data=snap.data()||{};
+    const name=data.fullName||user.displayName||user.email.split('@')[0];
     document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
     document.getElementById('nav-name').textContent=name;
 
-    // ── STREAK BREAK CHECK WITH SHIELD RECOVERY ──
-    const today=todayKey(),yesterday=yesterdayKey();
-    const lastDay=userData.lastTaskDay||'';
-    const currentMonth=new Date().toISOString().slice(0,7); // "2026-05"
+    // ── STREAK BREAK + SHIELD CHECK ──────────────────
+    const today=todayKey();
+    const yesterday=yesterdayKey();
+    const lastDay=data.lastTaskDay||'';
+    const missedDay=lastDay&&lastDay!==today&&lastDay!==yesterday;
 
-    if(lastDay&&lastDay!==today&&lastDay!==yesterday){
-      // Missed at least one day — check shields
-      const storedMonth=userData.shieldsLastReset||'';
-      const rawShields=userData.streakShields;
-      // If new month, reset shields to 5
-      const availableShields=storedMonth!==currentMonth?5:(rawShields??5);
+    if(missedDay){
+      const storedMonth=data.shieldsLastReset||'';
+      const isNewMonth=storedMonth!==monthKey();
+      // ✅ Fix: ?? inside Number() so undefined → 5, not NaN
+      const availableShields=isNewMonth?5:Math.max(0,Number(data.streakShields??5));
+      const currentStreak=Number(data.streak)||0;
 
-      if(availableShields>0&&(userData.streak||0)>0){
-        // Show shield recovery popup — don't wipe yet
-        showShieldPopup(availableShields,userData.streak||0,userData.totalPoints||0);
-        document.getElementById('loading').style.display='none';
-        document.getElementById('app-body').style.display='block';
-        // Render current (pre-wipe) state
-        const taskDays2=userData.taskDays||{};
-        const todayObj2=getTodayData(taskDays2,today);
-        const completed2=todayObj2.completed||[];
-        document.getElementById('streak-num').textContent=userData.streak||0;
-        buildStreakDots(userData.streak||0);
-        document.getElementById('streak-sub').textContent=`⚠️ Missed a day — use your Shield to recover!`;
-        renderTasks(todayObj2,userData.streak||0);
-        return; // Wait for user choice
+      // Show UI first, THEN popup
+      document.getElementById('loading').style.display='none';
+      document.getElementById('app-body').style.display='block';
+      renderTasks(getTodayData(data.taskDays||{},today), currentStreak);
+
+      if(availableShields>0 && currentStreak>0){
+        // Shield available — show popup
+        document.getElementById('streak-num').textContent=currentStreak;
+        buildStreakDots(currentStreak);
+        document.getElementById('streak-sub').textContent='⚠️ Missed a day — use your Shield to recover!';
+        document.getElementById('streak-warn').style.display='block';
+        showShieldPopup(availableShields, currentStreak, Number(data.totalPoints)||0);
       } else {
-        // No shields left — normal wipe
-        await updateDoc(ref,{totalPoints:0,streak:0,lastTaskDay:'',taskDays:{},streakShields:availableShields,shieldsLastReset:currentMonth});
-        userData={...userData,totalPoints:0,streak:0,lastTaskDay:'',taskDays:{},streakShields:availableShields};
-        alert('💀 You missed a day and have no Shields remaining. Your streak and all points have been reset to zero. Start fresh today!');
+        // No shields or no streak — wipe
+        await updateDoc(ref,{
+          totalPoints:0, streak:0, lastTaskDay:'', taskDays:{},
+          streakShields:availableShields, shieldsLastReset:monthKey()
+        });
+        document.getElementById('streak-num').textContent=0;
+        buildStreakDots(0);
+        document.getElementById('streak-sub').textContent=currentStreak>0?
+          '💀 No shields left — streak and points reset to zero. Start fresh.':
+          'Complete all 5 tasks today to start your first streak.';
+        renderTasks(getTodayData({},today),0);
       }
-    } else {
-      // No break — just check if shields need monthly reset
-      const storedMonth=userData.shieldsLastReset||'';
-      if(storedMonth!==currentMonth){
-        // Reset shields silently at start of new month
-        await updateDoc(ref,{streakShields:5,shieldsLastReset:currentMonth});
-        userData={...userData,streakShields:5,shieldsLastReset:currentMonth};
-      }
+      return;
     }
 
-    const streak=userData.streak||0;
-    const taskDays=userData.taskDays||{};
+    // ── MONTHLY SHIELD RESET ─────────────────────────
+    if((data.shieldsLastReset||'')!==monthKey()){
+      await updateDoc(ref,{streakShields:5, shieldsLastReset:monthKey()});
+    }
+
+    // ── NORMAL LOAD ──────────────────────────────────
+    const streak=Number(data.streak)||0;
+    const taskDays=data.taskDays||{};
     const todayObj=getTodayData(taskDays,today);
     const completed=todayObj.completed||[];
 
     document.getElementById('streak-num').textContent=streak;
     buildStreakDots(streak);
     document.getElementById('streak-sub').textContent=
-      completed.length===5?`✅ All done! ${streak}-day streak secured.`:
-      streak>0?`${streak}-day streak active — don't miss today.`:
+      completed.length===5?'✅ All done! '+streak+'-day streak secured.':
+      streak>0?'🔥 '+streak+'-day streak active — don't miss today.':
       'Complete all 5 tasks today to start your first streak.';
 
-    if(streak>0&&completed.length<5)document.getElementById('streak-warn').style.display='block';
+    if(streak>0&&completed.length<5)
+      document.getElementById('streak-warn').style.display='block';
 
     renderTasks(todayObj,streak);
-
     document.getElementById('loading').style.display='none';
     document.getElementById('app-body').style.display='block';
+
   }catch(err){
-    console.error('Tasks load error:',err);
+    console.error('Tasks error:',err);
     document.getElementById('loading').style.display='none';
     document.getElementById('error-wrap').style.display='block';
   }
 });
-
-// ── SHIELD FUNCTIONS ─────────────────────────
-let pendingShieldData={shields:0,streak:0,points:0,ref:null};
-
-function buildShieldPips(total,used){
-  const c=document.getElementById('sh-pips');if(!c)return;
-  c.innerHTML='';
-  for(let i=0;i<5;i++){
-    const d=document.createElement('div');
-    d.className=`sh-pip${i>=total-used&&i<5?' used':''}`;
-    // i < remaining = active, else used
-    d.textContent=i<(total-used)?'🛡️':'💔';
-    c.appendChild(d);
-  }
-}
-
-function showShieldPopup(shields,streak,points){
-  pendingShieldData={shields,streak,points};
-  document.getElementById('sh-streak').textContent=streak;
-  document.getElementById('sh-points').textContent=points.toLocaleString();
-  document.getElementById('sh-left').textContent=shields;
-  buildShieldPips(shields,0);
-  const popup=document.getElementById('shield-popup');
-  popup.style.display='flex';
-}
-
-window.useShield=async function(){
-  const btn=document.getElementById('sh-use-btn');
-  btn.disabled=true;btn.textContent='Recovering…';
-  const currentMonth=new Date().toISOString().slice(0,7);
-  const today=todayKey();
-  try{
-    const ref=doc(db,'users',currentUser.uid);
-    const newShields=pendingShieldData.shields-1;
-    // Restore streak — set lastTaskDay to yesterday so today can continue streak
-    await updateDoc(ref,{
-      streakShields:newShields,
-      shieldsLastReset:currentMonth,
-      lastTaskDay:yesterdayKey(), // treat as if they completed yesterday
-    });
-    userData={...userData,streakShields:newShields,shieldsLastReset:currentMonth,lastTaskDay:yesterdayKey()};
-    // Close popup
-    document.getElementById('shield-popup').style.display='none';
-    // Update streak display
-    document.getElementById('streak-num').textContent=pendingShieldData.streak;
-    buildStreakDots(pendingShieldData.streak);
-    document.getElementById('streak-sub').textContent=`🛡️ Shield used! ${pendingShieldData.streak}-day streak protected. Complete today's tasks to continue.`;
-    // Show success toast
-    const toast=document.createElement('div');
-    toast.textContent=`✅ Shield used! Streak of ${pendingShieldData.streak} days saved. ${newShields} shield${newShields!==1?'s':''} remaining this month.`;
-    toast.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(232,184,75,0.12);border:1px solid rgba(232,184,75,0.4);border-radius:10px;padding:12px 20px;color:#e8b84b;font-size:0.82rem;font-weight:600;z-index:9999;white-space:nowrap;max-width:90vw;text-align:center;';
-    document.body.appendChild(toast);
-    setTimeout(()=>toast.remove(),4000);
-  }catch(e){
-    btn.disabled=false;btn.textContent='🛡️ Use Shield — Recover My Streak';
-    alert('Error using shield. Please try again.');
-  }
-};
-
-window.acceptLoss=async function(){
-  if(!confirm('Are you sure? This will permanently reset your streak and all points to zero. This cannot be undone.'))return;
-  const currentMonth=new Date().toISOString().slice(0,7);
-  try{
-    const ref=doc(db,'users',currentUser.uid);
-    const newShields=pendingShieldData.shields;
-    await updateDoc(ref,{totalPoints:0,streak:0,lastTaskDay:'',taskDays:{},streakShields:newShields,shieldsLastReset:currentMonth});
-    userData={...userData,totalPoints:0,streak:0,lastTaskDay:'',taskDays:{},streakShields:newShields};
-    document.getElementById('shield-popup').style.display='none';
-    document.getElementById('streak-num').textContent=0;
-    buildStreakDots(0);
-    document.getElementById('streak-sub').textContent='Start fresh — complete all 5 tasks today to begin a new streak.';
-    renderTasks(getTodayData({},todayKey()),0);
-  }catch(e){alert('Error. Please try again.');}
-};
 
 window.handleLogout=async()=>{try{await signOut(auth);}finally{window.location.href='index.html';}};
 </script>
