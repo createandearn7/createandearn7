@@ -337,7 +337,7 @@ function renderTasks(todayObj, streak){
   });
 
   const done=completed.length;
-  document.getElementById('prog-title').textContent='Today's Progress — '+done+' / 5 tasks';
+  document.getElementById('prog-title').textContent='Today\'s Progress \u2014 '+done+' / 5 tasks';
   document.getElementById('prog-fill').style.width=Math.round(done/5*100)+'%';
   document.getElementById('prog-stat').textContent=Math.round(done/5*100)+'% complete — '+todayPts+' pts earned today';
 }
@@ -488,6 +488,7 @@ window.acceptLoss=async function(){
 };
 
 // ── AUTH + LOAD ───────────────────────────────────────
+let _pageLoaded=false;
 const authTimeout=setTimeout(()=>{
   document.getElementById('loading').style.display='none';
   document.getElementById('error-wrap').style.display='block';
@@ -496,6 +497,8 @@ const authTimeout=setTimeout(()=>{
 onAuthStateChanged(auth,async user=>{
   clearTimeout(authTimeout);
   if(!user){window.location.href='index.html'; return;}
+  if(_pageLoaded) return; // guard: only run once per page load
+  _pageLoaded=true;
   currentUser=user;
 
   try{
@@ -571,7 +574,7 @@ onAuthStateChanged(auth,async user=>{
     buildStreakDots(streak);
     document.getElementById('streak-sub').textContent=
       completed.length===5?'✅ All done! '+streak+'-day streak secured.':
-      streak>0?'🔥 '+streak+'-day streak active — don't miss today.':
+      streak>0?'🔥 '+streak+'-day streak active \u2014 don\'t miss today.':
       'Complete all 5 tasks today to start your first streak.';
 
     if(streak>0&&completed.length<5)
@@ -584,6 +587,7 @@ onAuthStateChanged(auth,async user=>{
   }catch(err){
     console.error('Tasks error:',err);
     document.getElementById('loading').style.display='none';
+    document.getElementById('app-body').style.display='none';
     document.getElementById('error-wrap').style.display='block';
   }
 });
