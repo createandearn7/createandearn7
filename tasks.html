@@ -4,506 +4,529 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Task Center — CreateAndEarn</title>
+<meta name="robots" content="noindex,nofollow"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;1,300&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <style>
-:root{--bg:#09090e;--surface:#111118;--card:#17171f;--border:#252532;--accent:#6c63ff;--green:#00c896;--rose:#f05d7a;--gold:#e8b84b;--text:#ededf5;--sub:#9090a8;--faint:#3a3a50;--radius:14px;}
+:root{
+  --bg:#09090e;--surface:#111118;--card:#17171f;--border:#252532;
+  --accent:#6c63ff;--green:#00c896;--rose:#f05d7a;--gold:#e8b84b;
+  --text:#ededf5;--sub:#9090a8;--faint:#3a3a50;--radius:14px;
+}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;min-height:100vh;}
-h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;line-height:1.2;letter-spacing:-0.3px;}
-p{color:var(--sub);}strong{color:var(--text);font-weight:600;}a{text-decoration:none;color:var(--accent);}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;min-height:100vh;}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;line-height:1.2;}
+p{color:var(--sub);}
+strong{color:var(--text);font-weight:600;}
+a{text-decoration:none;color:var(--accent);}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(9,9,14,0.93);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
 .logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--text);}
 .logo em{font-style:italic;color:var(--accent);}
 .nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
 .nav-links a{color:var(--sub);font-size:0.875rem;font-weight:500;transition:color .2s;}
 .nav-links a:hover,.nav-links a.active{color:var(--text);}
 .nav-user{display:flex;align-items:center;gap:10px;}
-.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;}
-.nav-name{font-size:0.85rem;font-weight:600;color:var(--text);}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 22px;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all .2s;font-family:'Instrument Sans',sans-serif;}
-.btn-fill{background:var(--accent);color:#fff;}
-.btn-fill:hover{transform:translateY(-1px);}
-.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
-.btn-ghost:hover{border-color:var(--accent);}
-.btn-sm{padding:7px 16px;font-size:0.8rem;border-radius:8px;}
-.mobile-nav{display:none;position:fixed;top:auto;bottom:0;left:0;right:0;z-index:9999;background:rgba(9,9,14,0.98);backdrop-filter:blur(18px);border-top:1px solid var(--border);padding:8px 0 env(safe-area-inset-bottom,8px);}
-.mobile-nav-inner{display:flex;justify-content:space-around;}
-.mnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border-radius:8px;color:var(--sub);font-size:0.6rem;font-weight:600;text-decoration:none;transition:color .2s;min-width:52px;}
-.mnav-item.active,.mnav-item:hover{color:var(--accent);}
-.mnav-item .mico{font-size:1.3rem;line-height:1;}
-.app-shell{padding-top:72px;}
-.app-body{max-width:860px;margin:0 auto;padding:56px 48px 100px;}
-.sec-label{font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block;}
-.page-header{margin-bottom:36px;}
-.page-header h1{font-size:clamp(1.8rem,3vw,2.4rem);color:var(--text);margin-bottom:6px;}
-.streak-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:28px;flex-wrap:wrap;}
-.sb-left h3{font-family:'Instrument Sans',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:4px;}
-.sb-left p{font-size:0.82rem;margin:0;}
-.streak-days{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
-.streak-day{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--sub);background:rgba(255,255,255,0.04);border:1px solid var(--border);flex-direction:column;gap:2px;}
-.streak-day.done{background:rgba(0,200,150,0.12);border-color:rgba(0,200,150,0.3);color:var(--green);}
-.streak-day.today{background:rgba(108,99,255,0.15);border-color:var(--accent);color:var(--accent);}
-.sb-right{text-align:center;flex-shrink:0;}
-.sb-right .big{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:700;color:var(--text);line-height:1;}
-.sb-right .big em{font-style:italic;color:var(--accent);}
-.sb-right span{font-size:0.72rem;color:var(--sub);}
-.prog-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin-bottom:28px;}
-.prog-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.prog-top h3{font-family:'Instrument Sans',sans-serif;font-size:0.88rem;font-weight:700;color:var(--text);}
-.reset{font-size:0.78rem;color:var(--sub);display:flex;align-items:center;gap:6px;}
-.reset strong{color:var(--gold);}
-.prog-track{height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:10px;}
-.prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .6s ease;}
-.prog-stat{font-size:0.78rem;color:var(--sub);text-align:right;}
+.nav-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--rose));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}
+.btn-sm{padding:7px 16px;font-size:0.8rem;border-radius:8px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',sans-serif;border:1px solid var(--border);background:transparent;color:var(--text);transition:all .2s;}
+.btn-sm:hover{border-color:var(--accent);}
 
-/* TASK CARDS */
-.task-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;transition:border-color .2s;}
-.task-card.done{opacity:0.65;border-color:rgba(0,200,150,0.25);background:rgba(0,200,150,0.02);}
-.task-tag{display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:5px;margin-bottom:10px;}
-.tag-login{background:rgba(108,99,255,0.08);color:var(--accent);}
+/* ── MOBILE NAV ── */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(9,9,14,0.98);border-top:1px solid var(--border);padding:8px 0;}
+.mob-nav-inner{display:flex;justify-content:space-around;}
+.mnav{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;color:var(--sub);font-size:0.6rem;font-weight:600;text-decoration:none;min-width:48px;}
+.mnav.active,.mnav:hover{color:var(--accent);}
+.mnav .ico{font-size:1.2rem;line-height:1;}
+
+/* ── LAYOUT ── */
+.wrap{padding:88px 48px 100px;max-width:860px;margin:0 auto;}
+.sec-label{font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:8px;}
+
+/* ── LOADING ── */
+#page-loading{display:flex;align-items:center;justify-content:center;min-height:80vh;gap:10px;color:var(--sub);font-size:0.9rem;}
+.spin{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── STREAK BANNER ── */
+.streak-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:24px;flex-wrap:wrap;}
+.sb-title{font-family:'Instrument Sans',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:4px;}
+.sb-sub{font-size:0.82rem;color:var(--sub);}
+.dots{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.dot{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;color:var(--sub);background:rgba(255,255,255,0.04);border:1px solid var(--border);flex-direction:column;gap:2px;}
+.dot.done{background:rgba(0,200,150,0.12);border-color:rgba(0,200,150,0.3);color:var(--green);}
+.dot.today{background:rgba(108,99,255,0.15);border-color:var(--accent);color:var(--accent);}
+.streak-big{font-family:'Fraunces',serif;font-size:2.8rem;font-weight:700;color:var(--text);line-height:1;text-align:center;}
+.streak-big em{color:var(--accent);font-style:italic;}
+.streak-lbl{font-size:0.72rem;color:var(--sub);text-align:center;margin-top:4px;}
+
+/* ── SHIELDS BADGE ── */
+.shields-row{display:flex;align-items:center;justify-content:space-between;background:rgba(232,184,75,0.05);border:1px solid rgba(232,184,75,0.15);border-radius:10px;padding:12px 18px;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+.shields-left{font-size:0.85rem;color:var(--text);font-weight:600;}
+.shields-left span{color:var(--gold);}
+.shields-pips{display:flex;gap:5px;}
+.sh-pip{font-size:0.9rem;}
+.sh-pip.used{opacity:0.2;filter:grayscale(1);}
+
+/* ── PROGRESS ── */
+.prog-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.prog-top h3{font-family:'Instrument Sans',sans-serif;font-size:0.88rem;font-weight:700;color:var(--text);}
+.reset-timer{font-size:0.78rem;color:var(--sub);}
+.reset-timer strong{color:var(--gold);}
+.prog-track{height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:8px;}
+.prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .6s;}
+.prog-stat{font-size:0.75rem;color:var(--sub);text-align:right;}
+
+/* ── TASK CARDS ── */
+.task-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:14px;transition:border-color .2s;}
+.task-card:hover{border-color:var(--faint);}
+.task-card.done{opacity:0.6;border-color:rgba(0,200,150,0.2);}
+.tag{display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 9px;border-radius:4px;margin-bottom:10px;}
+.tag-login{background:rgba(108,99,255,0.1);color:var(--accent);}
 .tag-like{background:rgba(240,93,122,0.1);color:var(--rose);}
-.tag-follow{background:rgba(108,99,255,0.1);color:var(--accent);}
+.tag-follow{background:rgba(108,99,255,0.08);color:#a89cff;}
 .tag-comment{background:rgba(0,200,150,0.1);color:var(--green);}
 .tag-share{background:rgba(232,184,75,0.1);color:var(--gold);}
-.task-card h3{font-family:'Instrument Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:6px;}
-.task-card>p{font-size:0.83rem;margin-bottom:16px;max-width:100%;}
-
-/* PROGRESS BAR IN CARD */
-.task-prog{margin-bottom:16px;}
-.task-prog-label{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--sub);margin-bottom:5px;}
-.task-prog-track{height:4px;background:var(--border);border-radius:100px;overflow:hidden;}
-.task-prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s;}
-
-.task-foot{display:flex;justify-content:space-between;align-items:flex-end;padding-top:14px;border-top:1px solid var(--border);}
-.task-reward{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--gold);}
-.task-reward small{font-family:'Instrument Sans',sans-serif;font-size:0.7rem;color:var(--sub);font-weight:400;display:block;line-height:1.4;}
-.task-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
-.task-time{font-size:0.75rem;color:var(--sub);}
+.task-card h3{font-family:'Instrument Sans',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:6px;}
+.task-card .desc{font-size:0.82rem;margin-bottom:16px;max-width:100%;}
+.task-prog{margin-bottom:14px;}
+.tp-label{display:flex;justify-content:space-between;font-size:0.73rem;color:var(--sub);margin-bottom:5px;}
+.tp-track{height:4px;background:var(--border);border-radius:100px;overflow:hidden;}
+.tp-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));}
+.foot{display:flex;align-items:flex-end;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);}
+.reward{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;color:var(--gold);}
+.reward small{font-family:'Instrument Sans',sans-serif;font-size:0.7rem;color:var(--sub);font-weight:400;display:block;}
 .claim-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.83rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
-.claim-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,99,255,0.35);}
-.done-badge{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.25);color:var(--green);font-size:0.78rem;font-weight:700;padding:7px 16px;border-radius:8px;white-space:nowrap;}
-.feed-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 16px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap;}
-.feed-btn:hover{border-color:var(--accent);color:var(--accent);}
+.claim-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(108,99,255,0.35);}
+.claim-btn:disabled{background:var(--faint);color:var(--sub);cursor:not-allowed;transform:none;box-shadow:none;}
+.done-badge{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.25);color:var(--green);font-size:0.78rem;font-weight:700;padding:7px 14px;border-radius:8px;white-space:nowrap;}
+.feed-link{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 14px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;transition:all .2s;}
+.feed-link:hover{border-color:var(--accent);color:var(--accent);}
 
-.cap-notice{background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.18);border-radius:10px;padding:16px 20px;font-size:0.83rem;color:var(--sub);margin-bottom:28px;}
-.cap-notice strong{color:var(--accent);}
-.warn-box{background:rgba(240,93,122,0.05);border:1px solid rgba(240,93,122,0.18);border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:0.82rem;color:var(--sub);}
+/* ── WARN BOX ── */
+.warn-box{background:rgba(240,93,122,0.05);border:1px solid rgba(240,93,122,0.18);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:0.82rem;color:var(--sub);}
 .warn-box strong{color:var(--rose);}
-.abuse-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-top:32px;}
-.abuse-box h4{font-family:'Instrument Sans',sans-serif;font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:12px;}
-.abuse-box ul{list-style:none;font-size:0.82rem;color:var(--sub);line-height:2.1;}
-#loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;color:var(--sub);font-size:0.9rem;gap:12px;}
-.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.error-box{text-align:center;padding:60px 24px;}
-.error-box .ei{font-size:2.5rem;display:block;margin-bottom:12px;}
-.error-box h3{font-size:1.1rem;color:var(--text);margin-bottom:8px;}
-.error-box a{background:var(--accent);color:#fff;padding:9px 22px;border-radius:8px;font-weight:600;font-size:0.85rem;display:inline-block;margin-top:8px;}
-@media(max-width:960px){nav{padding:14px 24px;}.app-body{padding:48px 24px 80px;}}
-@media(max-width:600px){.nav-links{display:none;}.nav-name{display:none;}.mobile-nav{display:block;}.app-body{padding:40px 16px 110px;} .feed-wrap{padding:40px 16px 110px;} .page-wrap{padding:40px 16px 110px;}.streak-banner{flex-direction:column;}.streak-days{flex-wrap:wrap;}}
-/* ── SHIELD RECOVERY POPUP ── */
-.shield-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
-.shield-box{background:var(--card);border:1px solid rgba(232,184,75,0.3);border-radius:20px;padding:36px 32px 28px;max-width:440px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 60px rgba(232,184,75,0.08);}
-.shield-ico{font-size:4rem;display:block;margin-bottom:16px;animation:shpulse 1.5s ease infinite;}
-@keyframes shpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
-.shield-box h2{font-family:'Fraunces',serif;font-size:1.45rem;font-weight:700;color:var(--text);margin-bottom:8px;}
-.shield-box h2 em{font-style:italic;color:var(--gold);}
-.shield-box p{font-size:0.86rem;color:var(--sub);margin-bottom:10px;max-width:100%;}
-.sh-stats{display:flex;justify-content:center;gap:28px;margin:18px 0 24px;padding:16px;background:rgba(232,184,75,0.05);border:1px solid rgba(232,184,75,0.15);border-radius:12px;}
-.sh-stat .sv{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;color:var(--gold);line-height:1;}
-.sh-stat .sl{font-size:0.7rem;color:var(--sub);margin-top:4px;}
-.sh-use-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b8830a);color:#000;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;border:none;transition:all .2s;margin-bottom:12px;box-shadow:0 6px 20px rgba(232,184,75,0.28);}
-.sh-use-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(232,184,75,0.4);}
-.sh-use-btn:disabled{background:var(--faint);color:var(--sub);cursor:not-allowed;transform:none;box-shadow:none;}
-.sh-loss-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:10px;background:transparent;color:var(--sub);font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;border:1px solid var(--border);transition:all .2s;}
-.sh-loss-btn:hover{border-color:var(--rose);color:var(--rose);}
-.sh-pips{display:flex;justify-content:center;gap:8px;margin-top:16px;}
-.sh-pip{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;border:2px solid rgba(232,184,75,0.3);}
-.sh-pip.used{opacity:0.2;filter:grayscale(1);}
-.sh-note{font-size:0.7rem;color:var(--faint);margin-top:10px;}
-@media(max-width:480px){.shield-box{padding:26px 16px 22px;}}
+
+/* ── INFO BOX ── */
+.info-box{background:rgba(108,99,255,0.05);border:1px solid rgba(108,99,255,0.15);border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:0.82rem;color:var(--sub);}
+.info-box strong{color:var(--accent);}
+
+/* ── SHIELD POPUP ── */
+#shield-popup{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
+.shield-box{background:var(--card);border:1px solid rgba(232,184,75,0.3);border-radius:20px;padding:36px 30px 28px;max-width:420px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.5);}
+.shield-box .si{font-size:4rem;display:block;margin-bottom:14px;animation:pulse 1.5s ease infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+.shield-box h2{font-family:'Fraunces',serif;font-size:1.45rem;color:var(--text);margin-bottom:8px;}
+.shield-box h2 em{color:var(--gold);font-style:italic;}
+.shield-box .sd{font-size:0.85rem;color:var(--sub);margin-bottom:20px;max-width:100%;}
+.shield-stats{display:flex;justify-content:center;gap:24px;background:rgba(232,184,75,0.05);border:1px solid rgba(232,184,75,0.12);border-radius:10px;padding:16px;margin-bottom:22px;}
+.sstat .sv{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;color:var(--gold);line-height:1;}
+.sstat .sl{font-size:0.7rem;color:var(--sub);margin-top:3px;}
+.shield-use-btn{display:block;width:100%;padding:14px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b8830a);color:#000;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;border:none;margin-bottom:10px;transition:all .2s;box-shadow:0 6px 20px rgba(232,184,75,0.25);}
+.shield-use-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(232,184,75,0.38);}
+.shield-use-btn:disabled{background:var(--faint);color:var(--sub);cursor:not-allowed;transform:none;box-shadow:none;}
+.shield-loss-btn{display:block;width:100%;padding:11px;border-radius:10px;background:transparent;color:var(--sub);font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;border:1px solid var(--border);transition:all .2s;}
+.shield-loss-btn:hover{border-color:var(--rose);color:var(--rose);}
+.shield-note{font-size:0.68rem;color:var(--faint);margin-top:12px;}
+
+@media(max-width:960px){nav{padding:14px 24px;}.wrap{padding:72px 24px 100px;}}
+@media(max-width:600px){.nav-links{display:none;}.mob-nav{display:block;}.wrap{padding:72px 16px 100px;}.streak-banner{flex-direction:column;}.dots{flex-wrap:wrap;}}
 </style>
 </head>
 <body>
+
+<!-- NAV -->
 <nav>
   <a href="dashboard.html" class="logo">Create<em>&</em>Earn</a>
   <ul class="nav-links">
     <li><a href="dashboard.html">Dashboard</a></li>
     <li><a href="feed.html">Feed</a></li>
     <li><a href="tasks.html" class="active">Tasks</a></li>
+    <li><a href="referral.html">Refer</a></li>
     <li><a href="withdraw.html">Withdraw</a></li>
     <li><a href="profile.html">Profile</a></li>
   </ul>
   <div class="nav-user">
-    <div class="nav-avatar" id="nav-avatar">?</div>
-    <span class="nav-name" id="nav-name">…</span>
-    <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
+    <div class="nav-av" id="nav-av">?</div>
+    <span style="font-size:0.85rem;font-weight:600;color:var(--text);" id="nav-name">…</span>
+    <button class="btn-sm" onclick="doLogout()">Logout</button>
   </div>
 </nav>
 
-<div class="app-shell">
-  <div id="loading"><div class="spinner"></div><span>Loading your tasks…</span></div>
-
-<!-- ── SHIELD RECOVERY POPUP ── -->
-<div class="shield-overlay" id="shield-popup">
+<!-- SHIELD POPUP -->
+<div id="shield-popup">
   <div class="shield-box">
-    <span class="shield-ico">🛡️</span>
+    <span class="si">🛡️</span>
     <h2>Streak <em>Shield Available!</em></h2>
-    <p>You missed a day and your streak would normally reset to zero. But you have a Shield — use it to recover everything instantly.</p>
-    <div class="sh-stats">
-      <div class="sh-stat"><div class="sv" id="sh-streak">0</div><div class="sl">Streak Days</div></div>
-      <div class="sh-stat"><div class="sv" id="sh-points">0</div><div class="sl">Points Saved</div></div>
-      <div class="sh-stat"><div class="sv" id="sh-left">0</div><div class="sl">Shields Left</div></div>
+    <p class="sd">You missed a day. Normally your streak and points reset to zero — but you have a Shield! Use it to recover everything instantly.</p>
+    <div class="shield-stats">
+      <div class="sstat"><div class="sv" id="sp-streak">0</div><div class="sl">Day Streak</div></div>
+      <div class="sstat"><div class="sv" id="sp-points">0</div><div class="sl">Points Saved</div></div>
+      <div class="sstat"><div class="sv" id="sp-shields">0</div><div class="sl">Shields Left</div></div>
     </div>
-    <button class="sh-use-btn" id="sh-use-btn" onclick="useShield()">
-      🛡️ Use Shield — Recover My Streak
-    </button>
-    <button class="sh-loss-btn" onclick="acceptLoss()">
-      ❌ Accept Loss — Reset to Zero
-    </button>
-    <div class="sh-pips" id="sh-pips"></div>
-    <div class="sh-note">Shields reset to 5 on the 1st of every month. Each shield saves your full streak and all points.</div>
+    <button class="shield-use-btn" id="shield-use-btn" onclick="useShield()">🛡️ Use Shield — Save My Streak</button>
+    <button class="shield-loss-btn" onclick="acceptLoss()">❌ Accept Loss — Reset to Zero</button>
+    <div class="shield-note">Shields reset to 5 on the 1st of every month. Free for every user.</div>
   </div>
 </div>
-  <div id="error-wrap" style="display:none;" class="app-body"><div class="error-box"><span class="ei">⚠️</span><h3>Couldn't load tasks</h3><p style="color:var(--sub);font-size:0.85rem;margin-bottom:0;">Check your internet and try again.</p><a href="javascript:location.reload()">Reload</a></div></div>
-  <div class="app-body" id="app-body" style="display:none;">
-    <div class="page-header">
+
+<!-- PAGE LOADING -->
+<div id="page-loading"><div class="spin"></div><span>Loading your tasks…</span></div>
+
+<!-- MAIN CONTENT -->
+<div id="main" style="display:none;">
+  <div class="wrap">
+
+    <div style="margin-bottom:32px;">
       <span class="sec-label">Task Earner Program</span>
-      <h1>Daily Task Center</h1>
-      <p>Complete all 5 tasks before midnight to keep your streak and earn points.</p>
+      <h1 style="font-size:clamp(1.8rem,3vw,2.4rem);color:var(--text);margin-bottom:6px;">Daily Task Center</h1>
+      <p style="font-size:0.9rem;">Complete all 5 tasks before midnight to keep your streak and earn points.</p>
     </div>
-    <div class="warn-box" id="streak-warn" style="display:none;">💀 <strong>Streak at risk!</strong> You have an active streak but haven't finished today's tasks. Missing midnight resets everything to zero.</div>
+
+    <!-- STREAK WARN -->
+    <div class="warn-box" id="streak-warn" style="display:none;">
+      💀 <strong>Streak at risk!</strong> You haven't finished today's tasks. Miss midnight and everything resets to zero.
+    </div>
+
+    <!-- STREAK BANNER -->
     <div class="streak-banner">
-      <div class="sb-left">
-        <h3>🔥 Current Streak</h3>
-        <p id="streak-sub">Complete all tasks before midnight to keep it alive.</p>
-        <div class="streak-days" id="streak-dots"></div>
+      <div>
+        <div class="sb-title">🔥 Current Streak</div>
+        <p class="sb-sub" id="streak-sub">Complete all 5 tasks before midnight every day.</p>
+        <div class="dots" id="streak-dots"></div>
       </div>
-      <div class="sb-right"><div class="big"><em id="streak-num">0</em></div><span>day streak</span></div>
+      <div>
+        <div class="streak-big"><em id="streak-num">0</em></div>
+        <div class="streak-lbl">day streak</div>
+        <div style="text-align:center;margin-top:6px;font-size:0.72rem;color:var(--sub);">Resets in <strong id="countdown" style="color:var(--gold);">--:--:--</strong></div>
+      </div>
     </div>
-    <div class="prog-section">
+
+    <!-- SHIELDS -->
+    <div class="shields-row">
+      <div class="shields-left">🛡️ Monthly Shields: <span id="shields-count">5</span> / 5 remaining</div>
+      <div class="shields-pips" id="shields-pips"></div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="prog-card">
       <div class="prog-top">
-        <h3 id="prog-title">Today's Progress — 0 / 5 tasks</h3>
-        <div class="reset">Resets in <strong id="countdown">--:--:--</strong></div>
+        <h3 id="prog-label">Today's Progress — 0 / 5 tasks</h3>
+        <div class="reset-timer">Resets in <strong id="countdown2">--:--:--</strong></div>
       </div>
       <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-      <div class="prog-stat" id="prog-stat">0% complete — 0 pts earned today</div>
+      <div class="prog-stat" id="prog-stat">0% complete</div>
     </div>
-    <div class="cap-notice"><strong>How it works:</strong> The login task is claimed here. Like, comment, follow and share tasks complete <strong>automatically</strong> when you do those actions in the Feed — no manual claiming needed. Go to the Feed to start earning!</div>
-    <div id="tasks-container"></div>
-    <div class="abuse-box">
-      <h4>📌 Anti-Abuse Rules</h4>
-      <ul>
-        <li>✓ Bot or script-based completion = permanent ban</li>
-        <li>✓ Multiple accounts per device = all points forfeited</li>
-        <li>✓ Missing a streak day = full balance and points reset to zero</li>
-        <li>✓ All deductions explained in writing, appealable within 7 days</li>
-      </ul>
+
+    <!-- INFO -->
+    <div class="info-box">
+      <strong>How tasks work:</strong> The Login task is claimed here with one click. Like, Comment, Follow and Share tasks complete <strong>automatically</strong> when you do those actions in the Feed.
     </div>
+
+    <!-- TASKS -->
+    <div id="tasks-list"></div>
+
   </div>
 </div>
 
+<!-- MOBILE NAV -->
+<nav class="mob-nav">
+  <div class="mob-nav-inner">
+    <a href="dashboard.html" class="mnav"><span class="ico">🏠</span>Home</a>
+    <a href="feed.html" class="mnav"><span class="ico">📰</span>Feed</a>
+    <a href="tasks.html" class="mnav active"><span class="ico">🎯</span>Tasks</a>
+    <a href="referral.html" class="mnav"><span class="ico">🎁</span>Refer</a>
+    <a href="profile.html" class="mnav"><span class="ico">👤</span>Profile</a>
+  </div>
+</nav>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp }
+                                    from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-const firebaseConfig={apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",authDomain:"createandearn-b7502.firebaseapp.com",projectId:"createandearn-b7502",storageBucket:"createandearn-b7502.firebasestorage.app",messagingSenderId:"311184359792",appId:"1:311184359792:web:3b15ad30849e5645390fb5"};
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
+/* ── CONFIG ─────────────────────────────────── */
+const FB = {
+  apiKey:"AIzaSyA2WIIUaB290gQvtrGAbS5miLowbjKxF3I",
+  authDomain:"createandearn-b7502.firebaseapp.com",
+  projectId:"createandearn-b7502",
+  storageBucket:"createandearn-b7502.firebasestorage.app",
+  messagingSenderId:"311184359792",
+  appId:"1:311184359792:web:3b15ad30849e5645390fb5"
+};
+const app  = initializeApp(FB);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+let CU     = null; // currentUser
 
-let currentUser=null;
-
-// ── DATE HELPERS ──────────────────────────────────────
-function dateKey(offset=0){
-  const d=new Date();
-  d.setDate(d.getDate()+offset);
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-const todayKey=()=>dateKey(0);
-const yesterdayKey=()=>dateKey(-1);
-const monthKey=()=>new Date().toISOString().slice(0,7);
-
-// ── TASK DEFINITIONS ─────────────────────────────────
-const TASKS=[
-  {id:'login', type:'claim', tag:'tag-login', icon:'🔐', label:'Daily Login',   title:'Claim Daily Login Bonus',
-   desc:'Visit the Task Center every day and click Claim. This registers your streak for the day.',
+/* ── TASKS ───────────────────────────────────── */
+const TASKS = [
+  {id:'login', type:'claim', tag:'tag-login', icon:'🔐', label:'Daily Login',
+   title:'Claim Daily Login Bonus',
+   desc:'Visit the Task Center and click Claim every day. This registers your streak.',
    pts:10, cap:'Once per day', cap2:1, time:'~1 min'},
-  {id:'like',  type:'feed',  tag:'tag-like',  icon:'❤️', label:'Like Task',    title:'Like 20 Posts in the Feed',
-   desc:'Go to the Feed and like 20 posts. Points credited automatically when you reach 20.',
-   pts:20, cap:'20 likes / day · auto-tracked', cap2:20, time:'~4 min'},
-  {id:'follow',type:'feed',  tag:'tag-follow',icon:'👣', label:'Follow Task',  title:'Follow 5 Creators in the Feed',
+  {id:'like',  type:'feed',  tag:'tag-like',  icon:'❤️', label:'Like Task',
+   title:'Like 20 Posts in the Feed',
+   desc:'Go to the Feed and like 20 posts. Auto-completes when you reach 20.',
+   pts:20, cap:'20 likes / day', cap2:20, time:'~4 min'},
+  {id:'follow',type:'feed',  tag:'tag-follow',icon:'👣', label:'Follow Task',
+   title:'Follow 5 Creators in the Feed',
    desc:'Follow 5 new creators in the Feed. Auto-completes when you hit 5.',
-   pts:15, cap:'5 follows / day · auto-tracked', cap2:5, time:'~2 min'},
-  {id:'comment',type:'feed', tag:'tag-comment',icon:'💬',label:'Comment Task', title:'Leave 5 Comments in the Feed',
+   pts:15, cap:'5 follows / day', cap2:5, time:'~2 min'},
+  {id:'comment',type:'feed', tag:'tag-comment',icon:'💬',label:'Comment Task',
+   title:'Leave 5 Comments in the Feed',
    desc:'Comment on 5 posts (min 5 chars each). Auto-completes when you hit 5.',
-   pts:25, cap:'5 comments / day · auto-tracked', cap2:5, time:'~6 min'},
-  {id:'share',type:'feed',   tag:'tag-share', icon:'🔗', label:'Share Task',   title:'Share 2 Posts from the Feed',
-   desc:'Share 2 posts via WhatsApp, X, Facebook or Telegram. Auto-completes after 2 shares.',
-   pts:20, cap:'2 shares / day · auto-tracked', cap2:2, time:'~2 min'},
+   pts:25, cap:'5 comments / day', cap2:5, time:'~6 min'},
+  {id:'share', type:'feed',  tag:'tag-share', icon:'🔗', label:'Share Task',
+   title:'Share 2 Posts from the Feed',
+   desc:'Share 2 posts via WhatsApp, X, Facebook or Telegram. Auto-completes after 2.',
+   pts:20, cap:'2 shares / day', cap2:2, time:'~2 min'},
 ];
 
-// ── COUNTDOWN ────────────────────────────────────────
-function updateCountdown(){
+/* ── DATE HELPERS ────────────────────────────── */
+function fmt(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function today()    { return fmt(new Date()); }
+function yesterday(){ const d=new Date(); d.setDate(d.getDate()-1); return fmt(d); }
+function monthKey() { return new Date().toISOString().slice(0,7); }
+
+/* ── COUNTDOWN ───────────────────────────────── */
+function tick(){
   const now=new Date(), mid=new Date(); mid.setHours(24,0,0,0);
   const diff=mid-now;
-  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
-  const el=document.getElementById('countdown');
-  if(el) el.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const h=String(Math.floor(diff/3600000)).padStart(2,'0');
+  const m=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  const s=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+  const t=h+':'+m+':'+s;
+  const a=document.getElementById('countdown');
+  const b=document.getElementById('countdown2');
+  if(a)a.textContent=t;
+  if(b)b.textContent=t;
 }
-setInterval(updateCountdown,1000); updateCountdown();
+setInterval(tick,1000); tick();
 
-// ── STREAK DOTS ──────────────────────────────────────
-function buildStreakDots(streak){
-  const c=document.getElementById('streak-dots'); if(!c)return; c.innerHTML='';
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+/* ── STREAK DOTS ─────────────────────────────── */
+function drawDots(streak){
+  const c=document.getElementById('streak-dots');
+  if(!c)return; c.innerHTML='';
+  const DAY=['M','T','W','T','F','S','S'];
   for(let i=0;i<7;i++){
-    const el=document.createElement('div');
-    const pos=streak===0?i:(i%(streak>7?7:streak+1));
-    if(streak>0 && i<streak%7){
-      el.className='streak-day done';
-      el.innerHTML='<span>✓</span><span style="font-size:0.6rem">'+days[i]+'</span>';
-    } else if(streak>0 && i===streak%7){
-      el.className='streak-day today';
-      el.innerHTML='<span>→</span><span style="font-size:0.6rem">'+days[i]+'</span>';
-    } else {
-      el.className='streak-day';
-      el.innerHTML='<span>·</span><span style="font-size:0.6rem">'+days[i]+'</span>';
-    }
-    c.appendChild(el);
-  }
-}
-
-// ── GET TODAY DATA FROM FIRESTORE ────────────────────
-function getTodayData(taskDays, today){
-  if(!taskDays||!taskDays[today])
-    return{completed:[],loginCount:0,likeCount:0,followCount:0,commentCount:0,shareCount:0};
-  const v=taskDays[today];
-  if(Array.isArray(v))
-    return{completed:v,loginCount:v.includes('login')?1:0,likeCount:0,followCount:0,commentCount:0,shareCount:0};
-  return{
-    completed:v.completed||[],
-    loginCount:v.loginCount||0,
-    likeCount:v.likeCount||0,
-    followCount:v.followCount||0,
-    commentCount:v.commentCount||0,
-    shareCount:v.shareCount||0
-  };
-}
-
-// ── RENDER TASKS ──────────────────────────────────────
-function renderTasks(todayObj, streak){
-  const container=document.getElementById('tasks-container'); if(!container)return;
-  container.innerHTML='';
-  const completed=todayObj.completed||[];
-  let todayPts=0;
-  const counts={login:todayObj.loginCount,like:todayObj.likeCount,follow:todayObj.followCount,comment:todayObj.commentCount,share:todayObj.shareCount};
-
-  TASKS.forEach(task=>{
-    const isDone=completed.includes(task.id);
-    if(isDone) todayPts+=task.pts;
-    const count=counts[task.id]||0;
-    const pct=Math.min(100,Math.round((count/task.cap2)*100));
-    const card=document.createElement('div');
-    card.className='task-card'+(isDone?' done':'');
-
-    let actionHtml='';
-    if(isDone){
-      actionHtml='<span class="done-badge">✓ Done · +'+task.pts+' pts</span>';
-    } else if(task.type==='claim'){
-      actionHtml='<button class="claim-btn" data-id="'+task.id+'" data-pts="'+task.pts+'">Claim +'+task.pts+' pts →</button>';
-    } else {
-      actionHtml='<a href="feed.html" class="feed-btn">📰 Go to Feed →</a>';
-    }
-
-    card.innerHTML=
-      '<span class="task-tag '+task.tag+'">'+task.icon+' '+task.label+'</span>'+
-      '<h3>'+task.title+'</h3>'+
-      '<p>'+task.desc+'</p>'+
-      (task.type==='feed'&&!isDone?
-        '<div class="task-prog"><div class="task-prog-label"><span>Progress today</span><span>'+count+' / '+task.cap2+'</span></div><div class="task-prog-track"><div class="task-prog-fill" style="width:'+pct+'%"></div></div></div>'
-        :'')+
-      '<div class="task-foot"><div class="task-reward">+'+task.pts+' pts<small>'+task.cap+'</small></div>'+
-      '<div class="task-right"><span class="task-time">'+task.time+'</span>'+actionHtml+'</div></div>';
-
-    if(task.type==='claim'&&!isDone){
-      card.querySelector('.claim-btn').addEventListener('click',()=>claimLoginTask(task.pts, card));
-    }
-    container.appendChild(card);
-  });
-
-  const done=completed.length;
-  document.getElementById('prog-title').textContent='Today\'s Progress \u2014 '+done+' / 5 tasks';
-  document.getElementById('prog-fill').style.width=Math.round(done/5*100)+'%';
-  document.getElementById('prog-stat').textContent=Math.round(done/5*100)+'% complete — '+todayPts+' pts earned today';
-}
-
-// ── CLAIM LOGIN TASK ──────────────────────────────────
-async function claimLoginTask(pts, card){
-  if(!currentUser)return;
-  const btn=card.querySelector('.claim-btn');
-  if(btn){btn.disabled=true; btn.textContent='Claiming…';}
-
-  try{
-    const today=todayKey();
-    const yesterday=yesterdayKey();
-    const ref=doc(db,'users',currentUser.uid);
-
-    // Always fresh read
-    const snap=await getDoc(ref);
-    const data=snap.data()||{};
-    const taskDays=data.taskDays||{};
-    const todayObj=getTodayData(taskDays,today);
-
-    // Guard: already done today
-    if((todayObj.completed||[]).includes('login')){
-      if(btn){btn.textContent='Already done';}
-      return;
-    }
-
-    const prevStreak=Number(data.streak)||0;
-    const lastDay=data.lastTaskDay||'';
-    const prevPoints=Number(data.totalPoints)||0;
-
-    // Streak: only increment if lastDay was exactly yesterday
-    let newStreak;
-    if(lastDay===yesterday)     newStreak=prevStreak+1;
-    else if(lastDay===today)    newStreak=prevStreak;   // same day (shouldn't happen)
-    else                         newStreak=1;            // first day or fresh start
-
-    const newCompleted=[...(todayObj.completed||[]),'login'];
-
-    // ✅ Use dot-notation so we DON'T wipe feed action counts
-    await updateDoc(ref,{
-      streak: newStreak,
-      totalPoints: prevPoints+pts,
-      lastTaskDay: today,
-      [`taskDays.${today}.completed`]: newCompleted,
-      [`taskDays.${today}.loginCount`]: 1,
-      lastUpdated: serverTimestamp()
-    });
-
-    // Update UI
-    document.getElementById('streak-num').textContent=newStreak;
-    buildStreakDots(newStreak);
-    document.getElementById('streak-sub').textContent=
-      newStreak===1?'🔥 Streak started! Come back tomorrow.':
-      newStreak>=7?'🏆 '+newStreak+'-day streak! Bonus active.':
-      '🔥 '+newStreak+'-day streak. Don\'t miss tomorrow.';
-
-    const updatedTodayObj={...todayObj, completed:newCompleted, loginCount:1};
-    renderTasks(updatedTodayObj, newStreak);
-    if(newCompleted.length===5)
-      document.getElementById('streak-warn').style.display='none';
-
-  }catch(err){
-    console.error('Claim error:',err);
-    if(btn){btn.disabled=false; btn.textContent='Claim +'+pts+' pts →';}
-    alert('Error claiming task. Please try again.');
-  }
-}
-
-// ── SHIELD POPUP ──────────────────────────────────────
-let _shieldData={shields:0,streak:0,points:0};
-
-function buildShieldPips(shields){
-  const c=document.getElementById('sh-pips'); if(!c)return; c.innerHTML='';
-  for(let i=0;i<5;i++){
     const d=document.createElement('div');
-    d.className='sh-pip'+(i>=shields?' used':'');
-    d.textContent=i<shields?'🛡️':'💔';
+    if(streak>0 && i<streak%7){
+      d.className='dot done';
+      d.innerHTML='<span style="font-size:0.85rem">✓</span><span>'+DAY[i]+'</span>';
+    } else if(streak>0 && i===streak%7){
+      d.className='dot today';
+      d.innerHTML='<span style="font-size:0.85rem">→</span><span>'+DAY[i]+'</span>';
+    } else {
+      d.className='dot';
+      d.innerHTML='<span>·</span><span>'+DAY[i]+'</span>';
+    }
     c.appendChild(d);
   }
 }
 
+/* ── SHIELD PIPS ─────────────────────────────── */
+function drawPips(shields){
+  const c=document.getElementById('shields-pips');
+  if(!c)return; c.innerHTML='';
+  for(let i=0;i<5;i++){
+    const s=document.createElement('span');
+    s.className='sh-pip'+(i>=shields?' used':'');
+    s.textContent=i<shields?'🛡️':'💔';
+    c.appendChild(s);
+  }
+  const cnt=document.getElementById('shields-count');
+  if(cnt)cnt.textContent=shields;
+}
+
+/* ── GET TODAY DATA ──────────────────────────── */
+function todayData(taskDays, t){
+  const v=taskDays&&taskDays[t];
+  if(!v)return{completed:[],loginCount:0,likeCount:0,followCount:0,commentCount:0,shareCount:0};
+  if(Array.isArray(v))return{completed:v,loginCount:v.includes('login')?1:0,likeCount:0,followCount:0,commentCount:0,shareCount:0};
+  return{
+    completed:v.completed||[],
+    loginCount:v.loginCount||0, likeCount:v.likeCount||0,
+    followCount:v.followCount||0, commentCount:v.commentCount||0,
+    shareCount:v.shareCount||0
+  };
+}
+
+/* ── RENDER TASKS ────────────────────────────── */
+function renderTasks(tObj, streak){
+  const list=document.getElementById('tasks-list');
+  if(!list)return;
+  list.innerHTML='';
+  const done=tObj.completed||[];
+  const counts={login:tObj.loginCount,like:tObj.likeCount,follow:tObj.followCount,comment:tObj.commentCount,share:tObj.shareCount};
+  let earnedToday=0;
+  TASKS.forEach(function(task){
+    const isDone=done.includes(task.id);
+    if(isDone)earnedToday+=task.pts;
+    const cnt=counts[task.id]||0;
+    const pct=Math.min(100,Math.round(cnt/task.cap2*100));
+    const card=document.createElement('div');
+    card.className='task-card'+(isDone?' done':'');
+    let action='';
+    if(isDone){
+      action='<span class="done-badge">✓ Done · +'+task.pts+' pts</span>';
+    } else if(task.type==='claim'){
+      action='<button class="claim-btn" id="claim-'+task.id+'">Claim +'+task.pts+' pts →</button>';
+    } else {
+      action='<a href="feed.html" class="feed-link">📰 Go to Feed →</a>';
+    }
+    let prog='';
+    if(task.type==='feed'&&!isDone){
+      prog='<div class="task-prog">'+
+        '<div class="tp-label"><span>Progress today</span><span>'+cnt+' / '+task.cap2+'</span></div>'+
+        '<div class="tp-track"><div class="tp-fill" style="width:'+pct+'%"></div></div>'+
+        '</div>';
+    }
+    card.innerHTML=
+      '<span class="tag '+task.tag+'">'+task.icon+' '+task.label+'</span>'+
+      '<h3>'+task.title+'</h3>'+
+      '<p class="desc">'+task.desc+'</p>'+
+      prog+
+      '<div class="foot">'+
+        '<div class="reward">+'+task.pts+' pts<small>'+task.cap+'</small></div>'+
+        '<div>'+action+'</div>'+
+      '</div>';
+    list.appendChild(card);
+    if(task.type==='claim'&&!isDone){
+      const btn=document.getElementById('claim-'+task.id);
+      if(btn)btn.addEventListener('click',function(){ claimLogin(task.pts, btn); });
+    }
+  });
+  const n=done.length;
+  const el=document.getElementById('prog-label');
+  if(el)el.textContent="Today's Progress — "+n+" / 5 tasks";
+  const pf=document.getElementById('prog-fill');
+  if(pf)pf.style.width=Math.round(n/5*100)+'%';
+  const ps=document.getElementById('prog-stat');
+  if(ps)ps.textContent=Math.round(n/5*100)+'% complete — '+earnedToday+' pts earned today';
+}
+
+/* ── SHOW / HIDE ─────────────────────────────── */
+function showApp(){ document.getElementById('page-loading').style.display='none'; document.getElementById('main').style.display='block'; }
+function showLoad(){ document.getElementById('page-loading').style.display='flex'; document.getElementById('main').style.display='none'; }
+
+/* ── CLAIM LOGIN TASK ────────────────────────── */
+async function claimLogin(pts, btn){
+  if(!CU)return;
+  btn.disabled=true; btn.textContent='Claiming…';
+  try{
+    const t=today(), y=yesterday();
+    const ref=doc(db,'users',CU.uid);
+    const snap=await getDoc(ref);
+    const data=snap.data()||{};
+    const taskDays=data.taskDays||{};
+    const tObj=todayData(taskDays,t);
+    if(tObj.completed.includes('login')){ btn.textContent='Already done'; return; }
+
+    const prevStreak=Number(data.streak)||0;
+    const lastDay=data.lastTaskDay||'';
+    let newStreak=1;
+    if(lastDay===y)      newStreak=prevStreak+1;
+    else if(lastDay===t) newStreak=prevStreak;
+
+    const newDone=[...tObj.completed,'login'];
+    await updateDoc(ref,{
+      streak:           newStreak,
+      totalPoints:      (Number(data.totalPoints)||0)+pts,
+      lastTaskDay:      t,
+      ['taskDays.'+t+'.completed']: newDone,
+      ['taskDays.'+t+'.loginCount']: 1,
+      lastUpdated:      serverTimestamp()
+    });
+
+    document.getElementById('streak-num').textContent=newStreak;
+    drawDots(newStreak);
+    document.getElementById('streak-sub').textContent=
+      newStreak===1?'🔥 Streak started! Come back tomorrow.':
+      newStreak>=7?'🏆 '+newStreak+'-day streak! Bonus active.':
+      '🔥 '+newStreak+'-day streak. Do not miss tomorrow.';
+
+    const updatedObj=Object.assign({},tObj,{completed:newDone,loginCount:1});
+    renderTasks(updatedObj,newStreak);
+    if(newDone.length===5)document.getElementById('streak-warn').style.display='none';
+  }catch(e){
+    console.error('Claim error:',e);
+    btn.disabled=false; btn.textContent='Claim +'+pts+' pts →';
+    alert('Error claiming. Please try again.');
+  }
+}
+
+/* ── SHIELD POPUP LOGIC ──────────────────────── */
+var _sd={shields:0,streak:0,points:0};
+
 function showShieldPopup(shields,streak,points){
-  _shieldData={shields,streak,points};
-  document.getElementById('sh-streak').textContent=streak;
-  document.getElementById('sh-points').textContent=points.toLocaleString();
-  document.getElementById('sh-left').textContent=shields;
-  buildShieldPips(shields);
-  // Move popup to body so it's never inside a hidden parent
-  const popup=document.getElementById('shield-popup');
-  document.body.appendChild(popup);
-  popup.style.display='flex';
+  _sd={shields:shields,streak:streak,points:points};
+  document.getElementById('sp-streak').textContent=streak;
+  document.getElementById('sp-points').textContent=points.toLocaleString();
+  document.getElementById('sp-shields').textContent=shields;
+  document.getElementById('shield-popup').style.display='flex';
 }
 
 window.useShield=async function(){
-  const btn=document.getElementById('sh-use-btn');
+  const btn=document.getElementById('shield-use-btn');
   btn.disabled=true; btn.textContent='Recovering…';
   try{
-    const ref=doc(db,'users',currentUser.uid);
-    const newShields=_shieldData.shields-1;
-    // ✅ Set lastTaskDay to yesterday so streak continues today
-    // ✅ Use dot-notation, don't touch taskDays
+    const ref=doc(db,'users',CU.uid);
+    const newShields=Math.max(0,_sd.shields-1);
     await updateDoc(ref,{
-      streakShields: newShields,
+      streakShields:    newShields,
       shieldsLastReset: monthKey(),
-      lastTaskDay: yesterdayKey()
+      lastTaskDay:      yesterday()
     });
     document.getElementById('shield-popup').style.display='none';
-    document.getElementById('streak-num').textContent=_shieldData.streak;
-    buildStreakDots(_shieldData.streak);
+    document.getElementById('streak-num').textContent=_sd.streak;
+    drawDots(_sd.streak);
+    drawPips(newShields);
+    document.getElementById('shields-count').textContent=newShields;
     document.getElementById('streak-warn').style.display='block';
-    document.getElementById('streak-sub').textContent=
-      '🛡️ Shield used! '+_shieldData.streak+'-day streak protected. Complete today\'s tasks to continue.';
-    btn.disabled=false; btn.textContent='🛡️ Use Shield — Recover My Streak';
-
-    // Toast
-    const toast=document.createElement('div');
-    toast.textContent='✅ Shield used! Streak of '+_shieldData.streak+' days saved. '+newShields+' shield'+(newShields!==1?'s':'')+' remaining this month.';
-    toast.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(232,184,75,0.12);border:1px solid rgba(232,184,75,0.4);border-radius:10px;padding:12px 20px;color:#e8b84b;font-size:0.82rem;font-weight:600;z-index:99999;white-space:nowrap;max-width:90vw;text-align:center;';
-    document.body.appendChild(toast);
-    setTimeout(()=>toast.remove(),4000);
+    document.getElementById('streak-sub').textContent='Shield used! '+_sd.streak+'-day streak protected. Complete tasks today to continue.';
+    btn.disabled=false; btn.textContent='Shield Used Successfully!';
   }catch(e){
     console.error(e);
-    btn.disabled=false; btn.textContent='🛡️ Use Shield — Recover My Streak';
-    alert('Error using shield. Try again.');
+    btn.disabled=false; btn.textContent='Shield Use Failed — Try Again';
+    alert('Error. Please try again.');
   }
 };
 
 window.acceptLoss=async function(){
-  if(!confirm('Are you sure? Your streak and ALL points will be permanently reset to zero. This cannot be undone.'))return;
+  if(!confirm('This permanently resets your streak and ALL points to zero. Cannot be undone.'))return;
   try{
-    const ref=doc(db,'users',currentUser.uid);
-    // ✅ Don't touch taskDays — just reset streak/points
-    await updateDoc(ref,{
-      totalPoints:0,
-      streak:0,
-      lastTaskDay:'',
-      streakShields:_shieldData.shields,
-      shieldsLastReset:monthKey()
-    });
+    const ref=doc(db,'users',CU.uid);
+    await updateDoc(ref,{totalPoints:0,streak:0,lastTaskDay:'',streakShields:_sd.shields,shieldsLastReset:monthKey()});
     document.getElementById('shield-popup').style.display='none';
     document.getElementById('streak-num').textContent=0;
-    buildStreakDots(0);
+    drawDots(0);
     document.getElementById('streak-warn').style.display='none';
-    document.getElementById('streak-sub').textContent='Start fresh — complete all 5 tasks today to begin a new streak.';
-    renderTasks(getTodayData({},todayKey()),0);
+    document.getElementById('streak-sub').textContent='Start fresh — complete all 5 tasks today.';
+    renderTasks(todayData({},today()),0);
   }catch(e){alert('Error. Please try again.');}
 };
 
-// ── AUTH + LOAD ───────────────────────────────────────
-let _pageLoaded=false;
-const authTimeout=setTimeout(()=>{
-  document.getElementById('loading').style.display='none';
-  document.getElementById('error-wrap').style.display='block';
-},8000);
+/* ── AUTH ────────────────────────────────────── */
+const authTimer=setTimeout(function(){
+  document.getElementById('page-loading').style.display='none';
+  alert('Connection timed out. Please check your internet and reload.');
+  window.location.href='index.html';
+},12000);
 
-onAuthStateChanged(auth,async user=>{
-  clearTimeout(authTimeout);
-  if(!user){window.location.href='index.html'; return;}
-  if(_pageLoaded) return; // guard: only run once per page load
-  _pageLoaded=true;
-  currentUser=user;
+onAuthStateChanged(auth,async function(user){
+  clearTimeout(authTimer);
+  if(!user){ window.location.href='index.html'; return; }
+  CU=user;
 
   try{
     const ref=doc(db,'users',user.uid);
     let snap=await getDoc(ref);
+
     if(!snap.exists()){
       await setDoc(ref,{
         fullName:user.displayName||'', email:user.email,
@@ -513,96 +536,81 @@ onAuthStateChanged(auth,async user=>{
       });
       snap=await getDoc(ref);
     }
+
     const data=snap.data()||{};
     const name=data.fullName||user.displayName||user.email.split('@')[0];
-    document.getElementById('nav-avatar').textContent=name.charAt(0).toUpperCase();
+    document.getElementById('nav-av').textContent=name.charAt(0).toUpperCase();
     document.getElementById('nav-name').textContent=name;
 
-    // ── STREAK BREAK + SHIELD CHECK ──────────────────
-    const today=todayKey();
-    const yesterday=yesterdayKey();
+    const t=today(), y=yesterday();
     const lastDay=data.lastTaskDay||'';
-    const missedDay=lastDay&&lastDay!==today&&lastDay!==yesterday;
-
-    if(missedDay){
-      const storedMonth=data.shieldsLastReset||'';
-      const isNewMonth=storedMonth!==monthKey();
-      // ✅ Fix: ?? inside Number() so undefined → 5, not NaN
-      const availableShields=isNewMonth?5:Math.max(0,Number(data.streakShields??5));
-      const currentStreak=Number(data.streak)||0;
-
-      // Show UI first, THEN popup
-      document.getElementById('loading').style.display='none';
-      document.getElementById('app-body').style.display='block';
-      renderTasks(getTodayData(data.taskDays||{},today), currentStreak);
-
-      if(availableShields>0 && currentStreak>0){
-        // Shield available — show popup
-        document.getElementById('streak-num').textContent=currentStreak;
-        buildStreakDots(currentStreak);
-        document.getElementById('streak-sub').textContent='⚠️ Missed a day — use your Shield to recover!';
-        document.getElementById('streak-warn').style.display='block';
-        showShieldPopup(availableShields, currentStreak, Number(data.totalPoints)||0);
-      } else {
-        // No shields or no streak — wipe
-        await updateDoc(ref,{
-          totalPoints:0, streak:0, lastTaskDay:'', taskDays:{},
-          streakShields:availableShields, shieldsLastReset:monthKey()
-        });
-        document.getElementById('streak-num').textContent=0;
-        buildStreakDots(0);
-        document.getElementById('streak-sub').textContent=currentStreak>0?
-          '💀 No shields left — streak and points reset to zero. Start fresh.':
-          'Complete all 5 tasks today to start your first streak.';
-        renderTasks(getTodayData({},today),0);
-      }
-      return;
-    }
-
-    // ── MONTHLY SHIELD RESET ─────────────────────────
-    if((data.shieldsLastReset||'')!==monthKey()){
-      await updateDoc(ref,{streakShields:5, shieldsLastReset:monthKey()});
-    }
-
-    // ── NORMAL LOAD ──────────────────────────────────
     const streak=Number(data.streak)||0;
-    const taskDays=data.taskDays||{};
-    const todayObj=getTodayData(taskDays,today);
-    const completed=todayObj.completed||[];
 
-    document.getElementById('streak-num').textContent=streak;
-    buildStreakDots(streak);
+    // ── MONTHLY SHIELD RESET ─────────────────────
+    const storedMonth=data.shieldsLastReset||'';
+    const isNewMonth=storedMonth!==monthKey();
+    const rawShields=data.streakShields;
+    const shields=isNewMonth?5:Math.max(0,rawShields==null?5:Number(rawShields));
+
+    if(isNewMonth){
+      updateDoc(ref,{streakShields:5,shieldsLastReset:monthKey()}).catch(function(){});
+    }
+
+    drawPips(shields);
+
+    // ── STREAK BREAK CHECK ───────────────────────
+    const missedDay=lastDay!==''&&lastDay!==t&&lastDay!==y;
+
+    if(missedDay&&streak>0){
+      // Missed a day with an active streak
+      if(shields>0){
+        // Show recovery popup
+        const points=Number(data.totalPoints)||0;
+        document.getElementById('streak-num').textContent=streak;
+        drawDots(streak);
+        document.getElementById('streak-sub').textContent='Missed a day — use your Shield to recover!';
+        document.getElementById('streak-warn').style.display='block';
+        renderTasks(todayData(data.taskDays||{},t),streak);
+        showApp();
+        showShieldPopup(shields,streak,points);
+        return;
+      } else {
+        // No shields — wipe
+        await updateDoc(ref,{
+          totalPoints:0,streak:0,lastTaskDay:'',
+          streakShields:0,shieldsLastReset:monthKey()
+        });
+        alert('You missed a day and have no Shields left. Streak and all points reset to zero.');
+        data.streak=0; data.totalPoints=0; data.lastTaskDay=''; data.taskDays={};
+      }
+    }
+
+    // ── NORMAL RENDER ────────────────────────────
+    const finalStreak=Number(data.streak)||0;
+    const tObj=todayData(data.taskDays||{},t);
+    const done=tObj.completed.length;
+
+    document.getElementById('streak-num').textContent=finalStreak;
+    drawDots(finalStreak);
     document.getElementById('streak-sub').textContent=
-      completed.length===5?'✅ All done! '+streak+'-day streak secured.':
-      streak>0?'🔥 '+streak+'-day streak active \u2014 don\'t miss today.':
-      'Complete all 5 tasks today to start your first streak.';
+      done===5?'All tasks done! '+finalStreak+'-day streak secured.':
+      finalStreak>0?finalStreak+'-day streak — do not miss today.':
+      'Complete all 5 tasks today to start your streak.';
 
-    if(streak>0&&completed.length<5)
+    if(finalStreak>0&&done<5)
       document.getElementById('streak-warn').style.display='block';
 
-    renderTasks(todayObj,streak);
-    document.getElementById('loading').style.display='none';
-    document.getElementById('app-body').style.display='block';
+    renderTasks(tObj,finalStreak);
+    showApp();
 
   }catch(err){
-    console.error('Tasks error:',err);
-    document.getElementById('loading').style.display='none';
-    document.getElementById('app-body').style.display='none';
-    document.getElementById('error-wrap').style.display='block';
+    console.error('Tasks page error:',err);
+    document.getElementById('page-loading').style.display='none';
+    alert('Error loading tasks: '+err.message+'. Please reload.');
   }
 });
 
-window.handleLogout=async()=>{try{await signOut(auth);}finally{window.location.href='index.html';}};
+window.doLogout=async function(){ try{ await signOut(auth); }finally{ window.location.href='index.html'; } };
 </script>
-
-<nav class="mobile-nav">
-  <div class="mobile-nav-inner">
-    <a href="dashboard.html" class="mnav-item"><span class="mico">🏠</span>Home</a>
-    <a href="feed.html" class="mnav-item"><span class="mico">📰</span>Feed</a>
-    <a href="tasks.html" class="mnav-item active"><span class="mico">🎯</span>Tasks</a>
-    <a href="withdraw.html" class="mnav-item"><span class="mico">💸</span>Withdraw</a>
-    <a href="profile.html" class="mnav-item"><span class="mico">👤</span>Profile</a>
-  </div>
-</nav>
 </body>
 </html>
