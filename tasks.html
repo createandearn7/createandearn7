@@ -212,8 +212,17 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-it
 
     <!-- SHIELDS -->
     <div class="shields-section">
-      <div class="sh-label">🛡️ Monthly Shields: <span id="shields-count">5</span> / 5 remaining</div>
-      <div class="sh-pips" id="sh-pips"></div>
+      <div>
+        <div class="sh-label">🛡️ Monthly Shields: <span id="shields-count">5</span> / 5 remaining</div>
+        <div style="font-size:0.72rem;color:var(--sub);margin-top:3px;">Resets automatically on the 1st of every month</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="sh-pips" id="sh-pips"></div>
+        <button id="manual-shield-btn" onclick="useShield()"
+          style="background:linear-gradient(135deg,#e8b84b,#b8830a);color:#000;border:none;border-radius:8px;padding:8px 16px;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;transition:all .2s;white-space:nowrap;">
+          🛡️ Use Shield
+        </button>
+      </div>
     </div>
 
     <!-- PROGRESS -->
@@ -418,49 +427,81 @@ async function claimLogin(pts,btn){
   }
 }
 
-/* ── SHIELD: USE ── */
+/* ── SHIELD: USE (works manually any time) ── */
 window.useShield=async function(){
   if(!CU)return;
-  var btn=document.getElementById('use-sh-btn');
-  btn.disabled=true;btn.textContent='Saving streak…';
+
+  // Get fresh data first
+  var ref=doc(db,'users',CU.uid);
+  var snap=await getDoc(ref);
+  var data=snap.data()||{};
+
+  var rawSh=data.streakShields;
+  var storedMth=data.shieldsLastReset||'';
+  var isNewMth=storedMth!==monthKey();
+  var curShields=isNewMth?5:Math.max(0,rawSh==null?5:Number(rawSh));
+  var curStreak=Number(data.streak)||0;
+  var curPoints=Number(data.totalPoints)||0;
+
+  if(curShields<=0){
+    alert('You have no shields remaining this month.\n\nShields reset to 5 on the 1st of every month.');
+    return;
+  }
+
+  // Confirm before using
+  var msg='Use 1 Shield to restore your streak?\n\n'+
+    'Current streak: '+curStreak+' days\n'+
+    'Points: '+curPoints+'\n'+
+    'Shields remaining: '+curShields+' / 5\n\n'+
+    'This will set your last task day to yesterday so your streak continues today.';
+  if(!confirm(msg))return;
+
+  // Disable both shield buttons
+  var btn1=document.getElementById('use-sh-btn');
+  var btn2=document.getElementById('manual-shield-btn');
+  if(btn1){btn1.disabled=true;btn1.textContent='Saving…';}
+  if(btn2){btn2.disabled=true;btn2.textContent='Saving…';}
+
   try{
-    var ref=doc(db,'users',CU.uid);
-    var snap=await getDoc(ref);
-    var data=snap.data()||{};
-    var rawSh=data.streakShields;
-    var storedMth=data.shieldsLastReset||'';
-    var isNewMth=storedMth!==monthKey();
-    var curShields=isNewMth?5:Math.max(0,rawSh==null?5:Number(rawSh));
-    if(curShields<=0){
-      alert('You have no shields remaining this month. Shields reset on the 1st.');
-      btn.disabled=false;btn.textContent='🛡️ Use Shield — Save Streak';
-      return;
-    }
     var newShields=curShields-1;
-    // Restore: set lastTaskDay to yesterday → streak continues from today
-    await updateDoc(ref,{
-      streakShields:newShields,
-      shieldsLastReset:monthKey(),
-      lastTaskDay:yesterday()
-    });
-    // Hide banner
+    var updates={
+      streakShields:    newShields,
+      shieldsLastReset: monthKey(),
+      lastTaskDay:      yesterday()
+    };
+    await updateDoc(ref,updates);
+
+    // Hide banner if showing
     document.getElementById('shield-banner').style.display='none';
     document.getElementById('wrap').classList.remove('with-banner');
-    // Update pips
+
+    // Update pips and count
     drawPips(newShields);
-    // Re-read and re-render
+
+    // Re-read fresh data
     var snap2=await getDoc(ref);
     var d2=snap2.data()||{};
     var resStreak=Number(d2.streak)||0;
+
     document.getElementById('streak-num').textContent=resStreak;
     drawDots(resStreak);
-    document.getElementById('streak-sub').textContent='🛡️ Shield used! '+resStreak+'-day streak saved. Claim today to continue.';
+    document.getElementById('streak-sub').textContent=
+      '🛡️ Shield used! '+resStreak+'-day streak restored. Claim today\'s login to continue.';
+
     renderTasks(getTodayObj(d2.taskDays||{},today()),resStreak);
-    showToast('✅ Shield used! Streak of '+resStreak+' days saved. '+newShields+' shield'+(newShields!==1?'s':'')+' left this month.');
+
+    // Re-enable buttons
+    if(btn1){btn1.disabled=false;btn1.textContent='🛡️ Use Shield — Save Streak';}
+    if(btn2){btn2.disabled=newShields<=0;btn2.textContent=newShields<=0?'No Shields Left':'🛡️ Use Shield';}
+    if(btn2&&newShields<=0){btn2.style.background='var(--faint)';btn2.style.color='var(--sub)';btn2.style.cursor='not-allowed';}
+
+    showToast('✅ Shield used! '+resStreak+'-day streak saved. '+newShields+' shield'+(newShields!==1?'s':'')+' left this month.');
+
   }catch(e){
     console.error(e);
-    btn.disabled=false;btn.textContent='🛡️ Use Shield — Save Streak';
-    alert('Error: '+e.message);
+    if(btn1){btn1.disabled=false;btn1.textContent='🛡️ Use Shield — Save Streak';}
+    if(btn2){btn2.disabled=false;btn2.textContent='🛡️ Use Shield';}
+    alert('Error: '+e.message+'. Please try again.');
   }
 };
 
@@ -523,6 +564,12 @@ onAuthStateChanged(auth,async function(user){
     var shields=isNewMth?5:Math.max(0,rawSh==null?5:Number(rawSh));
     if(isNewMth){updateDoc(ref,{streakShields:5,shieldsLastReset:monthKey()}).catch(function(){});}
     drawPips(shields);
+    // Disable manual shield btn if no shields
+    var manBtn=document.getElementById('manual-shield-btn');
+    if(manBtn&&shields<=0){
+      manBtn.disabled=true;manBtn.textContent='No Shields Left';
+      manBtn.style.background='var(--faint)';manBtn.style.color='var(--sub)';manBtn.style.cursor='not-allowed';
+    }
 
     // Missed day check — NEVER auto-wipe, just show banner
     var missedDay=(lastDay!==''&&lastDay!==t&&lastDay!==y);
